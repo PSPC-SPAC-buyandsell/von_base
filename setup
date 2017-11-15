@@ -1,20 +1,51 @@
 #!/bin/bash
 
+if [[ "${EUID}" -ne 0 ]]
+then
+    echo "Error: please run ${BASH_SOURCE[0]} as sudo"
+    echo
+    exit 1
+fi
+
 DIR_ROOT="$(realpath $(dirname ${BASH_SOURCE[0]}))"
 DIR_FILES="${DIR_ROOT}/files"
+
+# prerequisites
+apt install -y build-essential pkg-config cmake libssl-dev libsqlite3-dev libsodium-dev
+apt install -y python3.5 python3-pip virtualenv
+
+# python virtual environment (setup as non-sudo)
+OPERATOR=$(logname)
+DIR_HOME=$(eval echo "~$(logname)")
+DIR_VENV="${DIR_HOME}/venv"
+DIR_PY35="${DIR_VENV}/py35"
+[[ -d "${DIR_VENV}" ]] || sudo -u ${OPERATOR} mkdir "${DIR_VENV}"
+[[ -d "${DIR_PY35}" ]] || sudo -u ${OPERATOR} virtualenv -p /usr/bin/python3.5 "${DIR_PY35}"
+sudo -u ${OPERATOR} source "${DIR_PY35}/bin/activate"
+sudo -u ${OPERATOR} pip install -U pytest
+sudo -u ${OPERATOR} pip install -U pytest-asyncio
+
+# docker
+apt install -y linux-image-extra-$(uname -4) linux-image-extra-virtual
+apt install -y apt-transport-https ca-certificates curl software-properties-common
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
+add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+apt -y update
+apt -y install docker-ce
+usermod -a -G docker ${OPERATOR}
 
 # build docker image
 INDY_POOL=$(docker images --filter reference=indy_pool | sed '1,1d' | wc -l)
 if [[ "${INDY_POOL}" -eq "0" ]]
 then
-    docker build --build-arg pool_ip=10.0.0.2 -f "${DIR_FILES}/indy-pool.dockerfile" -t indy_pool .
+    sudo -u ${OPERATOR} docker build --build-arg pool_ip=10.0.0.2 -f "${DIR_FILES}/indy-pool.dockerfile" -t indy_pool .
 fi
 
 # build docker network
 INDY_POOL_NETWORK=$(docker network ls --filter name=indy_pool_network | sed '1,1d' | wc -l)
 if [[ "${INDY_POOL_NETWORK}" -eq "0" ]]
 then
-    docker network create --subnet 10.0.0.0/8 indy_pool_network
+    sudo -u ${OPERATOR} docker network create --subnet 10.0.0.0/8 indy_pool_network
 fi
 
 # install libindy.so
