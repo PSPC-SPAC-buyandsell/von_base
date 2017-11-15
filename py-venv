@@ -1,0 +1,20 @@
+#!/bin/bash
+
+if [[ "${EUID}" -eq 0 ]]
+then
+    echo "Error: please run ${BASH_SOURCE[0]} as non-sudo"
+    echo
+    exit 1
+fi
+
+# python virtual environment (setup as non-sudo)
+DIR_HOME=$(eval echo "~")
+DIR_VENV="${DIR_HOME}/venv"
+DIR_PY35="${DIR_VENV}/py35"
+
+[[ -d "${DIR_VENV}" ]] || mkdir "${DIR_VENV}"
+[[ -d "${DIR_PY35}" ]] || virtualenv -p /usr/bin/python3.5 "${DIR_PY35}"
+
+source ${DIR_PY35}/bin/activate
+pip install -U pytest
+pip install -U pytest-asyncio

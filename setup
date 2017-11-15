@@ -9,24 +9,17 @@ fi
 
 DIR_ROOT="$(realpath $(dirname ${BASH_SOURCE[0]}))"
 DIR_FILES="${DIR_ROOT}/files"
+OPERATOR=$(logname)
 
 # prerequisites
 apt install -y build-essential pkg-config cmake libssl-dev libsqlite3-dev libsodium-dev
 apt install -y python3.5 python3-pip virtualenv
 
 # python virtual environment (setup as non-sudo)
-OPERATOR=$(logname)
-DIR_HOME=$(eval echo "~$(logname)")
-DIR_VENV="${DIR_HOME}/venv"
-DIR_PY35="${DIR_VENV}/py35"
-[[ -d "${DIR_VENV}" ]] || sudo -u ${OPERATOR} mkdir "${DIR_VENV}"
-[[ -d "${DIR_PY35}" ]] || sudo -u ${OPERATOR} virtualenv -p /usr/bin/python3.5 "${DIR_PY35}"
-sudo -u ${OPERATOR} source "${DIR_PY35}/bin/activate"
-sudo -u ${OPERATOR} pip install -U pytest
-sudo -u ${OPERATOR} pip install -U pytest-asyncio
+sudo -u ${OPERATOR} -i "${DIR_ROOT}/py-venv"
 
 # docker
-apt install -y linux-image-extra-$(uname -4) linux-image-extra-virtual
+apt install -y linux-image-extra-$(uname -r) linux-image-extra-virtual
 apt install -y apt-transport-https ca-certificates curl software-properties-common
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
 add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
