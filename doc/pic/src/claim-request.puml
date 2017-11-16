@@ -1,0 +1,53 @@
+@startuml
+/'
+Copyright 2017 Government of Canada - Public Services and Procurement Canada - buyandsell.gc.ca
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+'/
+
+skinparam ParticipantPadding 20
+skinparam BoxPadding 20
+
+title Claim Request Sequence
+
+box "Indy" #LightBlue
+    participant "Ledger" as ledger
+endbox
+
+actor "Holder-Prover\n(The Org Book)\nAgent" as obag
+actor "Verifier\n(SRI)\nAgent" as sag
+actor "Actuator" as ator
+
+ator -> obag: GET <get-did>
+obag --> ator: DID
+
+=== CLAIM REQUEST SEQUENCE ==
+note over ledger, ator
+All agent service wrapper APIs are up
+Schema, claim definitions are on ledger
+Claim load sequence has stored claims at Holder-Prover
+endnote
+
+ator -> sag: POST <claim-request> on filter, proxy by Holder-Prover DID
+sag -> ledger: get endpoint for Holder-Prover DID
+ledger --> sag: Holder-Prover endpoint
+sag --> obag: POST <claim-request>
+obag -> obag: get claims
+obag --> sag: claims
+sag --> ator:  claims
+
+ator -> ator: claims_for(more filtration)
+ator -> ator: select claim of interest/get claim_uuid
+ator -> ator: prune_claims_json(claim_uuid)
+
+@enduml

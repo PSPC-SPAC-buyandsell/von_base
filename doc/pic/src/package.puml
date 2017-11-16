@@ -1,0 +1,24 @@
+@startuml
+package von_base {
+    [docker] as docker
+    [libindy] as libindy
+    [docker-network] as docker_network
+    [python virtual env] as py_venv
+    [design doc]
+}
+
+package von_agent {
+    [agent code] as agent_code
+}
+
+package von_connector {
+    [service wrapper API] as service_wrapper_api
+}
+
+service_wrapper_api ..> py_venv
+agent_code ..> py_venv
+service_wrapper_api <..> agent_code: use
+agent_code ..> libindy: use
+libindy .down.> docker_network
+docker_network .down.>docker
+@enduml

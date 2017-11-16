@@ -1,0 +1,70 @@
+@startuml
+/'
+Copyright 2017 Government of Canada - Public Services and Procurement Canada - buyandsell.gc.ca
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+'/
+
+skinparam ParticipantPadding 20
+skinparam BoxPadding 20
+
+title SRI Completion Sequence
+
+box "Indy" #LightBlue
+    participant "Ledger" as ledger
+endbox
+
+actor "Issuer/Holder-Prover/Verifier\n(SRI)\nAgent" as sag
+actor "Actuator" as ator
+
+note over sag, ator
+Assume proof from The Org Book verifies
+endnote
+
+sag -> sag: verify proof
+sag -> ator: True
+
+=== CLAIM LOAD SEQUENCE ==
+ator -> ator: build new claim\nfrom proof's revealed attrs,\nnew SRI completion data
+
+ator -> sag: POST <claim-hello>
+sag -> sag: get schema from cache
+sag -> sag: store claim offer
+sag -> ledger: get claim definition
+ledger --> sag: claim definition
+sag -> sag: store claim request
+sag --> ator: claim request
+
+ator -> sag: POST <claim-create>
+sag -> sag: create claim
+sag --> ator: claim
+ator -> sag: POST <claim-store>
+sag -> sag: store claim
+sag --> ator: returns
+ 
+=== PROOF REQUEST SEQUENCE ==
+ator -> sag: POST <proof-request> or <proof-request-by-claim-uuid>
+sag -> sag: get claim
+sag -> sag: create proof
+sag --> ator: proof
+
+=== VERIFICATION REQUEST SEQUENCE ==
+ator -> sag: POST <verification-request>
+sag -> ledger: get schema
+ledger --> sag: schema
+sag -> ledger: get claim definition
+ledger --> sag: claim definition
+sag -> sag: verify proof
+sag -> ator: True or False
+
+@enduml

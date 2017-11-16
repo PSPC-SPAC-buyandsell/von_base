@@ -1,0 +1,67 @@
+@startuml
+/'
+Copyright 2017 Government of Canada - Public Services and Procurement Canada - buyandsell.gc.ca
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+'/
+
+skinparam ParticipantPadding 20
+skinparam BaloxPadding 20
+
+title SRI Agent Boot Sequence
+
+
+box "Indy" #LightBlue
+    participant "Ledger" as ledger
+endbox
+actor "Trust Anchor\n(Origin)\nAgent" as tag
+actor "Holder-Prover\n(The Org Book)\nAgent" as obag
+actor "Verifier/Issuer/Holder-Prover\n(SRI)\nAgent" as sag
+
+=== BOOTSTRAP ==
+note over ledger, sag
+Trust anchor agent service wrapper API is up
+Prover/Holder agent service wrapper API is up
+endnote
+
+sag -> tag: get DID
+tag --> sag: trust anchor DID
+
+sag -> ledger: Look up own nym
+alt Nym present
+    ledger --> sag: nym
+else Nym not present
+    sag -[#blue]> tag: POST <agent-nym-send>
+    tag -[#blue]> ledger: send Issuer nym
+    ledger --[#blue]> tag: Issuer nym
+    tag --[#blue]> sag: Issuer nym
+end
+
+sag -> ledger: Look up endpoint attribution
+alt Endpoint attribution present
+    ledger --> sag: agent endpoint
+else Endpoint attribution not present
+    sag -[#blue]> ledger: send agent endpoint
+    ledger --[#blue]> sag: agent endpoint
+end
+
+sag -> ledger: look up schema
+ledger --> sag: schema
+sag -> sag: cache schema
+
+sag -> ledger: send claim definition
+ledger --> sag: returns
+
+sag -> sag: create, store master secret
+
+@enduml

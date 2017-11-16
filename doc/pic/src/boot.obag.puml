@@ -1,0 +1,62 @@
+@startuml
+/'
+Copyright 2017 Government of Canada - Public Services and Procurement Canada - buyandsell.gc.ca
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+'/
+
+skinparam ParticipantPadding 20
+skinparam BaloxPadding 20
+
+title Holder-Prover Agent Boot Sequence
+
+
+box "Indy" #LightBlue
+    participant "Ledger" as ledger
+endbox
+actor "Trust Anchor\n(Origin)\nAgent" as tag
+actor "Holder-Prover\n(The Org Book)\nAgent" as obag
+
+=== BOOTSTRAP ==
+note over ledger, obag
+Trust anchor agent service wrapper API is up
+endnote
+
+obag -> tag: get DID
+tag --> obag: trust anchor DID
+
+obag -> ledger: Look up own nym
+alt Nym present
+    ledger --> obag: agent nym
+else Nym not present
+    obag -[#blue]> tag: <agent-nym-send>
+    tag -[#blue]> ledger: send agent nym
+    ledger --[#blue]> tag: agent nym
+    tag --[#blue]> obag: agent nym
+end
+
+obag -> ledger: Look up endpoint attribution
+alt Endpoint attribution present
+    ledger --> obag: agent endpoint
+else Endpoint attribution not present
+    obag -[#blue]> ledger: send agent endpoint
+    ledger --[#blue]> obag: agent endpoint
+end
+
+obag -> ledger: Look up schema
+ledger --> obag: schema
+obag -> obag: cache schema
+
+obag -> obag: create, store master secret
+
+@enduml
