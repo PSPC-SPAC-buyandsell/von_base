@@ -7,13 +7,26 @@ then
     exit 1
 fi
 
-DIR_ROOT="$(realpath $(dirname ${BASH_SOURCE[0]}))"
+DIR_ROOT="$(readlink -f $(dirname ${BASH_SOURCE[0]}))"
 DIR_FILES="${DIR_ROOT}/files"
-OPERATOR=$(logname)
+OPERATOR=${SUDO_USER}
+UBUNTU_VERSION=$(cat /etc/issue | head -1 | awk '{print $2}' | sed -e 's/\..*//')
 
 # prerequisites
-apt install -y build-essential pkg-config cmake libssl-dev libsqlite3-dev libsodium-dev
-apt install -y python3.5 python3-pip virtualenv
+if [[ "${UBUNTU_VERSION}" -lt "16" ]]
+then
+    sudo add-apt-repository -y ppa:chris-lea/libsodium
+    sudo add-apt-repository -y ppa:fkrull/deadsnakes
+    sudo apt -y update
+fi
+
+apt install -y build-essential pkg-config cmake libssl-dev libsqlite3-dev libsodium-dev python3.5 python3-pip
+if [[ "${UBUNTU_VERSION}" -lt "16" ]]
+then
+    apt install -y python-virtualenv
+else
+    apt install -y virtualenv
+fi
 
 # python virtual environment (setup as non-sudo)
 sudo -u ${OPERATOR} -i "${DIR_ROOT}/py-venv"
@@ -27,18 +40,18 @@ apt -y update
 apt -y install docker-ce
 usermod -a -G docker ${OPERATOR}
 
-# build docker image
-INDY_POOL=$(docker images --filter reference=indy_pool | sed '1,1d' | wc -l)
-if [[ "${INDY_POOL}" -eq "0" ]]
-then
-    sudo -u ${OPERATOR} docker build --build-arg pool_ip=10.0.0.2 -f "${DIR_FILES}/indy-pool.dockerfile" -t indy_pool .
-fi
-
 # build docker network
 INDY_POOL_NETWORK=$(docker network ls --filter name=indy_pool_network | sed '1,1d' | wc -l)
 if [[ "${INDY_POOL_NETWORK}" -eq "0" ]]
 then
     sudo -u ${OPERATOR} docker network create --subnet 10.0.0.0/8 indy_pool_network
+fi
+
+# build docker image
+INDY_POOL=$(docker images --filter reference=indy_pool | sed '1,1d' | wc -l)
+if [[ "${INDY_POOL}" -eq "0" ]]
+then
+    sudo -u ${OPERATOR} docker build --build-arg pool_ip=10.0.0.2 -f "${DIR_FILES}/indy-pool.dockerfile" -t indy_pool .
 fi
 
 # install libindy.so
