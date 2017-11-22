@@ -48,7 +48,7 @@ fi
 # python virtual environment (setup as non-sudo)
 sudo -u ${OPERATOR} -i "${DIR_ROOT}/setup-pipenv"
 
-docker
+# docker
 apt install -y linux-image-extra-$(uname -r) linux-image-extra-virtual
 apt install -y apt-transport-https ca-certificates curl software-properties-common
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
