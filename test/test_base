@@ -31,7 +31,10 @@ INDY_POOL=$(docker images --filter reference=indy_pool | sed '1,1d' | wc -l)
 INDY_POOL_NETWORK=$(docker network ls --filter name=indy_pool_network | sed '1,1d' | wc -l)
 [[ "${INDY_POOL_NETWORK}" -eq "1" ]] || quit 1
 
-DIR_PY35=$(eval echo "~$(logname)/venv/py35")
-[[ -d "${DIR_PY35}" ]] || quit 1
+# DIR_PY35=$(eval echo "~$(logname)/venv/py35")
+# [[ -d "${DIR_PY35}" ]] || quit 1
+
+PYTEST_PACKAGES=$(cat ${HOME}/Pipfile | awk '/\[packages\]/,0' | grep -P '(pytest)|(pytest-asyncio)' | wc -l)
+[[ "${DIR_PY35}" -eq "2" ]] || quit 1
 
 quit 0
