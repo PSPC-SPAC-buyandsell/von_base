@@ -11,7 +11,12 @@ at the command prompt. The operation will:
   - set up the base pipenv in the user directory
   - set up then uncompress and install the `libindy.so` shared library into `/usr/lib/`.
 
-Once `von_base` is set up, test the installation with test/test_base (it should echo `0`) and proceed to the installation of components `von_agent` and `von_connector`.
+Once `von_base` is set up, issue
+```
+$ newgrp docker
+$ test/test_base
+```
+to test the installation (`test_base` should echo `0`) and proceed to the installation of components `von_agent` and `von_connector`.
 
 ## Documentation
 The design document at `doc/agent-design.doc` discusses in detail the packages comprising the technology demonstrator project:
