@@ -23,19 +23,9 @@ then
     exit 1
 fi
 
-# python virtual environment (setup as non-sudo)
-# DIR_HOME=$(eval echo "~")
-# DIR_VENV="${DIR_HOME}/venv"
-# DIR_PY35="${DIR_VENV}/py35"
-
 # pipenv
 pip3 install -U pip
 pip install --user pipenv
-
-# [[ -d "${DIR_VENV}" ]] || mkdir "${DIR_VENV}"
-# [[ -d "${DIR_PY35}" ]] || virtualenv -p /usr/bin/python3.5 "${DIR_PY35}"
-
-# source ${DIR_PY35}/bin/activate
 
 pipenv --three
 pipenv install pytest

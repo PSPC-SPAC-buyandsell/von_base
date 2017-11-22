@@ -46,7 +46,7 @@ else
 fi
 
 # python virtual environment (setup as non-sudo)
-sudo -u ${OPERATOR} -i "${DIR_ROOT}/py-venv"
+sudo -u ${OPERATOR} -i "${DIR_ROOT}/setup-pipenv"
 
 docker
 apt install -y linux-image-extra-$(uname -r) linux-image-extra-virtual
