@@ -35,6 +35,6 @@ INDY_POOL_NETWORK=$(docker network ls --filter name=indy_pool_network | sed '1,1
 # [[ -d "${DIR_PY35}" ]] || quit 1
 
 PYTEST_PACKAGES=$(cat ${HOME}/Pipfile | awk '/\[packages\]/,0' | grep -P '(pytest)|(pytest-asyncio)' | wc -l)
-[[ "${DIR_PY35}" -eq "2" ]] || quit 1
+[[ "${PYTEST_PACKAGES}" -eq "2" ]] || quit 1
 
 quit 0

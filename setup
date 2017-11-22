@@ -48,30 +48,30 @@ fi
 # python virtual environment (setup as non-sudo)
 sudo -u ${OPERATOR} -i "${DIR_ROOT}/py-venv"
 
-# docker
-# apt install -y linux-image-extra-$(uname -r) linux-image-extra-virtual
-# apt install -y apt-transport-https ca-certificates curl software-properties-common
-# curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
-# add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
-# apt -y update
-# apt -y install docker-ce
-# usermod -a -G docker ${OPERATOR}
+docker
+apt install -y linux-image-extra-$(uname -r) linux-image-extra-virtual
+apt install -y apt-transport-https ca-certificates curl software-properties-common
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
+add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+apt -y update
+apt -y install docker-ce
+usermod -a -G docker ${OPERATOR}
 
 # build docker network
-# INDY_POOL_NETWORK=$(docker network ls --filter name=indy_pool_network | sed '1,1d' | wc -l)
-# if [[ "${INDY_POOL_NETWORK}" -eq "0" ]]
-# then
-    # sudo -u ${OPERATOR} docker network create --subnet 10.0.0.0/8 indy_pool_network
-# fi
+INDY_POOL_NETWORK=$(docker network ls --filter name=indy_pool_network | sed '1,1d' | wc -l)
+if [[ "${INDY_POOL_NETWORK}" -eq "0" ]]
+then
+    sudo -u ${OPERATOR} docker network create --subnet 10.0.0.0/8 indy_pool_network
+fi
 
 # build docker image
-# INDY_POOL=$(docker images --filter reference=indy_pool | sed '1,1d' | wc -l)
-# if [[ "${INDY_POOL}" -eq "0" ]]
-# then
-    # sudo -u ${OPERATOR} docker build --build-arg pool_ip=10.0.0.2 -f "${DIR_FILES}/indy-pool.dockerfile" -t indy_pool .
-# fi
+INDY_POOL=$(docker images --filter reference=indy_pool | sed '1,1d' | wc -l)
+if [[ "${INDY_POOL}" -eq "0" ]]
+then
+    sudo -u ${OPERATOR} docker build --build-arg pool_ip=10.0.0.2 -f "${DIR_FILES}/indy-pool.dockerfile" -t indy_pool .
+fi
 
-# install libindy.so
-# cd "${DIR_FILES}"
-# tar -xpvzf libindy.so.tgz &> /dev/null
-# mv libindy.so /usr/lib/
+install libindy.so
+cd "${DIR_FILES}"
+tar -xpvzf libindy.so.tgz &> /dev/null
+mv libindy.so /usr/lib/
