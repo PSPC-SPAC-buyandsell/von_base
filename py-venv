@@ -36,5 +36,6 @@ pip install --user pipenv
 # [[ -d "${DIR_PY35}" ]] || virtualenv -p /usr/bin/python3.5 "${DIR_PY35}"
 
 # source ${DIR_PY35}/bin/activate
+pipenv --three
 pipenv install pytest
 pipenv install pytest-asyncio
