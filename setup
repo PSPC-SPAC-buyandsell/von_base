@@ -23,9 +23,9 @@ then
     exit 1
 fi
 
-DIR_ROOT="$(readlink -f $(dirname ${BASH_SOURCE[0]}))"
-DIR_VON=$(dirname "${DIR_ROOT}")
-DIR_FILES="${DIR_ROOT}/files"
+DIR_TOP="$(readlink -f $(dirname ${BASH_SOURCE[0]}))"
+DIR_VON=$(dirname "${DIR_TOP}")
+DIR_FILES="${DIR_TOP}/files"
 OPERATOR=${SUDO_USER}
 UBUNTU_VERSION=$(cat /etc/issue | head -1 | awk '{print $2}' | sed -e 's/\..*//')
 
@@ -46,7 +46,7 @@ else
 fi
 
 # python virtual environment (setup as non-sudo)
-sudo -u ${OPERATOR} -i "${DIR_ROOT}/setup-pipenv"
+sudo -u ${OPERATOR} -i "${DIR_TOP}/setup-pipenv"
 
 # docker
 apt install -y linux-image-extra-$(uname -r) linux-image-extra-virtual
