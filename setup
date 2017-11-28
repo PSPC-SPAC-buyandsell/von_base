@@ -35,12 +35,9 @@ apt update -y && apt install -y build-essential pkg-config cmake libssl-dev libs
 sudo -u ${OPERATOR} -i "${DIR_TOP}/setup-pipenv"
 
 # docker
-apt install -y linux-image-extra-$(uname -r) linux-image-extra-virtual
-apt install -y curl software-properties-common
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
-add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
-apt -y update
-apt -y install docker-ce
+update-ca-certificates
+systemctl daemon-reload
+curl -fsSL https://get.docker.com | sh
 usermod -a -G docker ${OPERATOR}
 
 # build docker network
