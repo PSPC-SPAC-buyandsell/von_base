@@ -27,23 +27,9 @@ DIR_TOP="$(readlink -f $(dirname ${BASH_SOURCE[0]}))"
 DIR_VON=$(dirname "${DIR_TOP}")
 DIR_FILES="${DIR_TOP}/files"
 OPERATOR=${SUDO_USER}
-UBUNTU_VERSION=$(cat /etc/issue | head -1 | awk '{print $2}' | sed -e 's/\..*//')
 
 # prerequisites
-if [[ "${UBUNTU_VERSION}" -lt "16" ]]
-then
-    sudo add-apt-repository -y ppa:chris-lea/libsodium
-    sudo add-apt-repository -y ppa:fkrull/deadsnakes
-    sudo apt -y update
-fi
-
-apt update -y && apt install -y build-essential pkg-config cmake libssl-dev libsqlite3-dev libsodium-dev python3.5 python3-pip python3-nacl python-setuptools apt-transport-https ca-certificates
-if [[ "${UBUNTU_VERSION}" -lt "16" ]]
-then
-    apt install -y python-virtualenv
-else
-    apt install -y virtualenv
-fi
+apt update -y && apt install -y build-essential pkg-config cmake libssl-dev libsqlite3-dev libsodium-dev python3.5 python3-pip python3-nacl apt-transport-https ca-certificates
 
 # python virtual environment (setup as non-sudo)
 sudo -u ${OPERATOR} -i "${DIR_TOP}/setup-pipenv"
@@ -71,7 +57,7 @@ then
     sudo -u ${OPERATOR} docker build --build-arg pool_ip=10.0.0.2 -f "${DIR_FILES}/indy-pool.dockerfile" -t indy_pool .
 fi
 
-install libindy.so
+# install libindy.so
 cd "${DIR_FILES}"
 tar -xpvzf libindy.so.tgz &> /dev/null
 mv libindy.so /usr/lib/
