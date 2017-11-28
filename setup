@@ -37,7 +37,7 @@ then
     sudo apt -y update
 fi
 
-apt install -y build-essential pkg-config cmake libssl-dev libsqlite3-dev libsodium-dev python3.5 python3-pip
+apt update -y && apt install -y build-essential pkg-config cmake libssl-dev libsqlite3-dev libsodium-dev python3.5 python3-pip python3-nacl python-setuptools apt-transport-https ca-certificates
 if [[ "${UBUNTU_VERSION}" -lt "16" ]]
 then
     apt install -y python-virtualenv
@@ -50,7 +50,7 @@ sudo -u ${OPERATOR} -i "${DIR_TOP}/setup-pipenv"
 
 # docker
 apt install -y linux-image-extra-$(uname -r) linux-image-extra-virtual
-apt install -y apt-transport-https ca-certificates curl software-properties-common
+apt install -y curl software-properties-common
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
 add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
 apt -y update

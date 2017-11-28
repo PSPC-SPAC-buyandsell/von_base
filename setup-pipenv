@@ -24,8 +24,9 @@ then
 fi
 
 # pipenv
-pip3 install -U pip
-pip install --user pipenv
+pip install --trusted-host pypi.python.org pytest-xdist
+pip install --trusted-host pypi.python.org --upgrade pip
+pip3 install --user pipenv
 
 pipenv --three
 pipenv install pytest
