@@ -25,13 +25,11 @@ box "Indy" #LightBlue
     participant "Ledger" as ledger
 endbox
 actor "Trust Anchor\n(Origin)\nAgent" as tag
-actor "Holder-Prover\n(The Org Book)\nAgent" as obag
-actor "Verifier/Issuer/Holder-Prover\n(SRI)\nAgent" as sag
+actor "Verifier/Issuer\n(SRI)\nAgent" as sag
 
 === BOOTSTRAP ==
 note over ledger, sag
 Trust anchor agent service wrapper API is up
-Prover/Holder agent service wrapper API is up
 endnote
 
 sag -> tag: get DID
@@ -61,7 +59,5 @@ sag -> sag: cache schema
 
 sag -> ledger: send claim definition
 ledger --> sag: returns
-
-sag -> sag: create, store master secret
 
 @enduml

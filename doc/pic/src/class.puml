@@ -107,7 +107,6 @@ class TrustAnchorAgent {
 }
 
 class SRIAgent {
-    +reset_wallet()
     +process_post()
 }
 
@@ -132,9 +131,8 @@ BaseListeningAgent <|-down- Verifier
 AgentRegistrar <|-down- TrustAnchorAgent
 Origin <|-down- TrustAnchorAgent
 
-Issuer <|-right- SRIAgent
+Issuer <|-down- SRIAgent
 Verifier <|-down- SRIAgent
-HolderProver <|- SRIAgent
 
 Issuer <|- BCRegistrarAgent
 

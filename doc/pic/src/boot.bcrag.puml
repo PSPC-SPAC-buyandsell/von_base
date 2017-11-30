@@ -25,13 +25,11 @@ box "Indy" #LightBlue
     participant "Ledger" as ledger
 endbox
 actor "Trust Anchor\n(Origin)\nAgent" as tag
-actor "Holder-Prover\n(The Org Book)\nAgent" as obag
 actor "Issuer\n(BC Registrar)\nAgent" as bcrag
 
 === BOOTSTRAP ==
 note over ledger, bcrag
 Trust anchor agent service wrapper API is up
-Prover/Holder agent service wrapper API is up
 endnote
 
 bcrag -> tag: get DID
