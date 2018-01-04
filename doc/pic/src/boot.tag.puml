@@ -1,0 +1,64 @@
+@startuml
+/'
+Copyright 2017 Government of Canada - Public Services and Procurement Canada - buyandsell.gc.ca
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+'/
+
+skinparam ParticipantPadding 20
+skinparam BaloxPadding 20
+
+title Trust Anchor Agent Boot Sequence
+
+
+box "Indy" #LightBlue
+    participant "Ledger" as ledger
+endbox
+actor "Trust Anchor\n(Origin)\nAgent" as tag
+
+=== BOOTSTRAP ==
+note over ledger, tag
+Starting from genesis transactions on node pool: no data exist yet
+endnote
+
+
+note over ledger, tag
+Trust Anchor agent boots before any relying agents
+endnote
+
+tag -> ledger: Look up own nym
+alt Nym present
+    ledger -> tag: returns agent nym
+else Nym not present
+    tag --[#blue]> ledger: send agent nym
+    ledger --[#blue]> tag: returns agent nym
+end
+
+tag -> ledger: Look up endpoint attribution
+alt Endpoint attribution present
+    ledger -> tag: returns agent-endpoint
+else Endpoint attribution not present
+    tag --[#blue]> ledger: send agent endpoint
+    ledger --[#blue]> tag: returns agent endpoint
+end
+
+tag -> ledger: Look up schema
+alt Schema present
+    ledger -> tag: returns schema
+else Schema not present
+    tag --[#blue]> ledger: send schema
+    ledger --[#blue]> tag: returns schema
+end
+tag -> tag: cache schema
+
+@enduml

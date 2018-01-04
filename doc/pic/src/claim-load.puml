@@ -1,0 +1,67 @@
+@startuml
+/'
+Copyright 2017 Government of Canada - Public Services and Procurement Canada - buyandsell.gc.ca
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+'/
+
+skinparam ParticipantPadding 20
+skinparam BoxPadding 20
+
+title Claim Load Sequence
+
+box "Indy" #LightBlue
+    participant "Ledger" as ledger
+endbox
+
+actor "Holder-Prover\n(The Org Book)\nAgent" as obag
+actor "Issuer\n(BC Registrar)\nAgent" as bcrag
+actor "Actuator" as ator
+
+ator -> obag: GET <get-did>
+obag --> ator: DID
+
+=== CLAIM LOAD SEQUENCE ==
+note over ledger, ator
+All agent service wrapper APIs are up
+Schema, claim definitions are on ledger
+endnote
+
+ator -> bcrag: POST <claim-hello>, proxy by Holder-Prover DID
+bcrag -> ledger: get endpoint for Holder-Prover DID
+ledger --> bcrag: Holder-Prover endpoint
+bcrag -> obag: POST <claim-hello>
+obag -> obag: get schema from cache
+obag -> obag: store claim offer
+obag -> ledger: get claim definition
+ledger --> obag: claim definition
+obag -> obag: store claim request
+obag --> bcrag: claim request
+obag --> ator: claim request
+
+loop for each claim
+    ator -> bcrag: POST <claim-create>
+    bcrag -> bcrag: create claim
+    bcrag --> ator: claim
+    ator -> bcrag: POST <claim-store>, proxy by Holder-Prover DID
+    bcrag -> ledger: get endpoint for Holder-Prover DID
+    ledger --> bcrag: Holder-Prover endpoint
+    bcrag -> obag: POST <claim-store>
+    obag -> obag: store claim
+    obag --> bcrag: returns
+    bcrag --> ator: returns
+    
+end
+
+@enduml
+

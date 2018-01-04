@@ -1,5 +1,21 @@
 #!/bin/bash
 
+#
+# Copyright 2017 Government of Canada - Public Services and Procurement Canada - buyandsell.gc.ca
+# 
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# 
+# http://www.apache.org/licenses/LICENSE-2.0
+# 
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
 if [[ "${EUID}" -ne 0 ]]
 then
     echo "Error: please run ${BASH_SOURCE[0]} as sudo"
@@ -7,38 +23,24 @@ then
     exit 1
 fi
 
-DIR_ROOT="$(realpath $(dirname ${BASH_SOURCE[0]}))"
-DIR_FILES="${DIR_ROOT}/files"
+DIR_TOP="$(readlink -f $(dirname ${BASH_SOURCE[0]}))"
+DIR_VON=$(dirname "${DIR_TOP}")
+DIR_FILES="${DIR_TOP}/files"
+OPERATOR=${SUDO_USER}
 
 # prerequisites
-apt install -y build-essential pkg-config cmake libssl-dev libsqlite3-dev libsodium-dev
-apt install -y python3.5 python3-pip virtualenv
+apt update -y && apt install -y build-essential pkg-config cmake libssl-dev libsqlite3-dev libsodium-dev python3.5 python3-pip python3-nacl apt-transport-https ca-certificates
 
 # python virtual environment (setup as non-sudo)
-OPERATOR=$(logname)
-DIR_HOME=$(eval echo "~$(logname)")
-DIR_VENV="${DIR_HOME}/venv"
-DIR_PY35="${DIR_VENV}/py35"
-[[ -d "${DIR_VENV}" ]] || sudo -u ${OPERATOR} mkdir "${DIR_VENV}"
-[[ -d "${DIR_PY35}" ]] || sudo -u ${OPERATOR} virtualenv -p /usr/bin/python3.5 "${DIR_PY35}"
-sudo -u ${OPERATOR} source "${DIR_PY35}/bin/activate"
-sudo -u ${OPERATOR} pip install -U pytest
-sudo -u ${OPERATOR} pip install -U pytest-asyncio
+sudo -u ${OPERATOR} -i "${DIR_TOP}/setup-pipenv"
 
 # docker
-apt install -y linux-image-extra-$(uname -4) linux-image-extra-virtual
-apt install -y apt-transport-https ca-certificates curl software-properties-common
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
-add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
-apt -y update
-apt -y install docker-ce
-usermod -a -G docker ${OPERATOR}
-
-# build docker image
-INDY_POOL=$(docker images --filter reference=indy_pool | sed '1,1d' | wc -l)
-if [[ "${INDY_POOL}" -eq "0" ]]
+update-ca-certificates
+systemctl daemon-reload
+if [[ -z "$(which docker)" ]]
 then
-    sudo -u ${OPERATOR} docker build --build-arg pool_ip=10.0.0.2 -f "${DIR_FILES}/indy-pool.dockerfile" -t indy_pool .
+    curl -fsSL https://get.docker.com | sh
+    usermod -a -G docker ${OPERATOR}
 fi
 
 # build docker network
@@ -46,6 +48,13 @@ INDY_POOL_NETWORK=$(docker network ls --filter name=indy_pool_network | sed '1,1
 if [[ "${INDY_POOL_NETWORK}" -eq "0" ]]
 then
     sudo -u ${OPERATOR} docker network create --subnet 10.0.0.0/8 indy_pool_network
+fi
+
+# build docker image
+INDY_POOL=$(docker images --filter reference=indy_pool | sed '1,1d' | wc -l)
+if [[ "${INDY_POOL}" -eq "0" ]]
+then
+    sudo -u ${OPERATOR} docker build --build-arg pool_ip=10.0.0.2 -f "${DIR_FILES}/indy-pool.dockerfile" -t indy_pool .
 fi
 
 # install libindy.so
