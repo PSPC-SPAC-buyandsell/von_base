@@ -124,12 +124,12 @@ BaseAgent "1" *-right- "1" Wallet
 BaseAgent <|-down- BaseListeningAgent
 BaseListeningAgent <|-left- AgentRegistrar
 BaseListeningAgent <|-left- Origin
-BaseListeningAgent <|-right- Issuer
-BaseListeningAgent <|-down- HolderProver
-BaseListeningAgent <|-down- Verifier
+BaseListeningAgent <|-right- HolderProver
+BaseListeningAgent <|-right- Verifier
 
 AgentRegistrar <|-down- TrustAnchorAgent
 Origin <|-down- TrustAnchorAgent
+Origin <|-down- Issuer
 
 Issuer <|-down- SRIAgent
 Verifier <|-down- SRIAgent

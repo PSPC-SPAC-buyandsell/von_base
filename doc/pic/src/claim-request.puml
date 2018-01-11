@@ -38,7 +38,7 @@ Schema, claim definitions are on ledger
 Claim load sequence has stored claims at Holder-Prover
 endnote
 
-ator -> sag: POST <claim-request> on filter, proxy by Holder-Prover DID
+ator -> sag: POST <claim-request> on filter, proxy to Holder-Prover DID
 sag -> ledger: get endpoint for Holder-Prover DID
 ledger --> sag: Holder-Prover endpoint
 sag --> obag: POST <claim-request>

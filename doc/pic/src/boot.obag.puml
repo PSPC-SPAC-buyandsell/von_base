@@ -52,10 +52,6 @@ else Endpoint attribution not present
     ledger --[#blue]> obag: agent endpoint
 end
 
-obag -> ledger: Look up schema
-ledger --> obag: schema
-obag -> obag: cache schema
-
 obag -> obag: create, store master secret
 
 @enduml

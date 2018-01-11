@@ -38,27 +38,18 @@ endnote
 
 tag -> ledger: Look up own nym
 alt Nym present
-    ledger -> tag: returns agent nym
+    ledger --> tag: returns agent nym
 else Nym not present
-    tag --[#blue]> ledger: send agent nym
+    tag -[#blue]> ledger: send agent nym
     ledger --[#blue]> tag: returns agent nym
 end
 
 tag -> ledger: Look up endpoint attribution
 alt Endpoint attribution present
-    ledger -> tag: returns agent-endpoint
+    ledger --> tag: returns agent-endpoint
 else Endpoint attribution not present
-    tag --[#blue]> ledger: send agent endpoint
+    tag -[#blue]> ledger: send agent endpoint
     ledger --[#blue]> tag: returns agent endpoint
 end
-
-tag -> ledger: Look up schema
-alt Schema present
-    ledger -> tag: returns schema
-else Schema not present
-    tag --[#blue]> ledger: send schema
-    ledger --[#blue]> tag: returns schema
-end
-tag -> tag: cache schema
 
 @enduml

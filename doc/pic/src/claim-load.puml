@@ -37,7 +37,7 @@ All agent service wrapper APIs are up
 Schema, claim definitions are on ledger
 endnote
 
-ator -> bcrag: POST <claim-hello>, proxy by Holder-Prover DID
+ator -> bcrag: POST <claim-hello>, proxy to Holder-Prover DID
 bcrag -> ledger: get endpoint for Holder-Prover DID
 ledger --> bcrag: Holder-Prover endpoint
 bcrag -> obag: POST <claim-hello>
@@ -53,7 +53,7 @@ loop for each claim
     ator -> bcrag: POST <claim-create>
     bcrag -> bcrag: create claim
     bcrag --> ator: claim
-    ator -> bcrag: POST <claim-store>, proxy by Holder-Prover DID
+    ator -> bcrag: POST <claim-store>, proxy to Holder-Prover DID
     bcrag -> ledger: get endpoint for Holder-Prover DID
     ledger --> bcrag: Holder-Prover endpoint
     bcrag -> obag: POST <claim-store>

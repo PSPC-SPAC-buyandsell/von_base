@@ -53,11 +53,17 @@ else Endpoint attribution not present
     ledger --[#blue]> bcrag: agent endpoint
 end
 
-bcrag -> ledger: look up schema
-ledger --> bcrag: schema
-bcrag -> bcrag: cache schema
+loop for each schema that issuer originates
+    bcrag -> ledger: look up schema
+    alt Schema present
+        ledger --> bcrag: schema
+    else Schema not present
+        bcrag -[#blue]> ledger: send schema
+        ledger --[#blue]> bcrag: return schema
+    end
 
-bcrag -> ledger: send claim definition
-ledger --> bcrag: returns
+    bcrag -> ledger: send claim definition
+    ledger --> bcrag: return
+end
 
 @enduml

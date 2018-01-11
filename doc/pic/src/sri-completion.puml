@@ -38,7 +38,7 @@ sag -> ator: True
 === CLAIM LOAD SEQUENCE ==
 ator -> ator: build new claim\nfrom proof's revealed attrs,\nnew SRI completion data
 
-ator -> sag: POST <claim-hello>, proxy by Holder-Prover DID
+ator -> sag: POST <claim-hello>, proxy to Holder-Prover DID
 sag -> ledger: get endpoint for Holder-Prover DID
 ledger --> sag: Holder-Prover endpoint
 sag -> obag: POST <claim-hello>
@@ -53,7 +53,7 @@ sag --> ator: claim request
 ator -> sag: POST <claim-create>
 sag -> sag: create claim
 sag --> ator: claim
-ator -> sag: POST <claim-store>, proxy by Holder-Prover DID
+ator -> sag: POST <claim-store>, proxy to Holder-Prover DID
 sag -> ledger: get endpoint for Holder-Prover DID
 ledger -> sag: Holder-Prover endpoitn
 sag -> obag: POST <claim-store>
@@ -62,7 +62,7 @@ obag -> sag: returns
 sag --> ator: returns
  
 === PROOF REQUEST SEQUENCE ==
-ator -> sag: POST <proof-request> or <proof-request-by-claim-uuid>, proxy by Holder-Prover DID
+ator -> sag: POST <proof-request> or <proof-request-by-claim-uuid>, proxy to Holder-Prover DID
 sag -> ledger: get endpoint for Holder-Prover DID
 ledger --> sag: Holder-Prover endpoint
 sag --> obag: POST <proof-request>

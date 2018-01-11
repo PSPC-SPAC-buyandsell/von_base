@@ -53,11 +53,17 @@ else Endpoint attribution not present
     ledger --[#blue]> sag: agent endpoint
 end
 
-sag -> ledger: look up schema
-ledger --> sag: schema
-sag -> sag: cache schema
+loop for each schema that issuer originates
+    sag -> ledger: look up schema
+    alt Schema present
+        ledger --> sag: schema
+    else Schema not present
+        sag -[#blue]> ledger: send schema
+        ledger --[#blue]> sag: return schema
+    end
 
 sag -> ledger: send claim definition
-ledger --> sag: returns
+ledger --> sag: return
+end
 
 @enduml
