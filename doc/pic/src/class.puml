@@ -1,6 +1,6 @@
 @startuml
 /'
-Copyright 2017 Government of Canada - Public Services and Procurement Canada - buyandsell.gc.ca
+Copyright 2017-2018 Government of Canada - Public Services and Procurement Canada - buyandsell.gc.ca
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -16,6 +16,22 @@ limitations under the License.
 '/
 
 title Class Diagram
+
+class SchemaKey {
+    origin_did
+    name
+    version
+}
+
+class SchemaStore {
+    -_schema_key2schema
+    -_seq_no2schema_key
+    +__setitem__()
+    +__getitem__()
+    +contains()
+    +index()
+    +schema_key_for()
+}
 
 class Wallet {
     -_seed
@@ -118,6 +134,7 @@ class OrgBookAgent {
     +process_post()
 }
 
+BaseAgent "1" *-up- "1" SchemaStore
 BaseAgent "1" *-left- "1" NodePool
 BaseAgent "1" *-right- "1" Wallet
 

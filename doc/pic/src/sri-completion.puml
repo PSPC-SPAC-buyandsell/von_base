@@ -1,6 +1,6 @@
 @startuml
 /'
-Copyright 2017 Government of Canada - Public Services and Procurement Canada - buyandsell.gc.ca
+Copyright 2017-2018 Government of Canada - Public Services and Procurement Canada - buyandsell.gc.ca
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -36,7 +36,6 @@ sag -> sag: verify proof
 sag -> ator: True
 
 === CLAIM LOAD SEQUENCE ==
-ator -> ator: build new claim\nfrom proof's revealed attrs,\nnew SRI completion data
 
 ator -> sag: POST <claim-hello>, proxy to Holder-Prover DID
 sag -> ledger: get endpoint for Holder-Prover DID
@@ -50,17 +49,21 @@ obag -> obag: store claim request
 obag -> sag: claim request
 sag --> ator: claim request
 
-ator -> sag: POST <claim-create>
-sag -> sag: create claim
-sag --> ator: claim
-ator -> sag: POST <claim-store>, proxy to Holder-Prover DID
-sag -> ledger: get endpoint for Holder-Prover DID
-ledger -> sag: Holder-Prover endpoitn
-sag -> obag: POST <claim-store>
-obag -> obag: store claim
-obag -> sag: returns
-sag --> ator: returns
- 
+loop for each SRI claim
+    ator -> ator: build new claim\nfrom proof's revealed attrs,\nnew SRI completion data
+
+    ator -> sag: POST <claim-create>
+    sag -> sag: create claim
+    sag --> ator: claim
+    ator -> sag: POST <claim-store>, proxy to Holder-Prover DID
+    sag -> ledger: get endpoint for Holder-Prover DID
+    ledger -> sag: Holder-Prover endpoint
+    sag -> obag: POST <claim-store>
+    obag -> obag: store claim
+    obag -> sag: returns
+    sag --> ator: returns
+end
+
 === PROOF REQUEST SEQUENCE ==
 ator -> sag: POST <proof-request> or <proof-request-by-claim-uuid>, proxy to Holder-Prover DID
 sag -> ledger: get endpoint for Holder-Prover DID
