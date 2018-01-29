@@ -32,7 +32,9 @@ OPERATOR=${SUDO_USER}
 apt update -y && apt install -y build-essential pkg-config cmake libssl-dev libsqlite3-dev libsodium-dev python3.5 python3-pip python3-nacl apt-transport-https ca-certificates
 
 # python virtual environment (setup as non-sudo)
+cd "${DIR_VON}"
 sudo -u ${OPERATOR} -i "${DIR_TOP}/setup-pipenv"
+cd -
 
 # docker
 update-ca-certificates
