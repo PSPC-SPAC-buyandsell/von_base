@@ -62,7 +62,13 @@ loop for each schema that issuer originates
         ledger --[#blue]> bcrag: return schema
     end
 
-    bcrag -> ledger: send claim definition
+    bcrag -> ledger: look up claim def
+    alt Claim def present
+        bcrag -> ledger: send claim definition
+    else Schema not present
+        bcrag -[#blue]> ledger: send claim def
+    end
+
     ledger --> bcrag: return
 end
 
