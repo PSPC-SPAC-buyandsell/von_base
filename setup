@@ -16,6 +16,9 @@
 # limitations under the License.
 #
 
+export PIPENV_MAX_DEPTH=16
+export RUST_LOG=error
+
 if [[ "${EUID}" -ne 0 ]]
 then
     echo "Error: please run ${BASH_SOURCE[0]} as sudo"
@@ -24,7 +27,7 @@ then
 fi
 
 DIR_TOP="$(readlink -f $(dirname ${BASH_SOURCE[0]}))"
-DIR_VON=$(dirname "${DIR_TOP}")
+DIR_VON=$(dirname "${DIR_TOP}")  # container for von_base/, von_agent/, von_connector/ holds pipenv virtual environment
 DIR_FILES="${DIR_TOP}/files"
 OPERATOR=${SUDO_USER}
 
