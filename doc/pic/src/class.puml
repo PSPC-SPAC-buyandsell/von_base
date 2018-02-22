@@ -53,7 +53,7 @@ class NodePool {
     +close()
 }
 
-class BaseAgent {
+class _AgentCore {
     +pool
     +wallet
     +did
@@ -65,13 +65,8 @@ class BaseAgent {
     +get_endpoint()
 }
 
-class BaseListeningAgent {
-    +host
-    +port
-    +agent_api_path
-    +schema_cache
-    -_vet_keys()
-    -_schema_info()
+class _BaseAgent {
+    +cfg
     -_response_from_proxy()
     -_mro_dispatch()
     +send_endpoint()
@@ -134,15 +129,15 @@ class OrgBookAgent {
     +process_post()
 }
 
-BaseAgent "1" *-up- "1" SchemaStore
-BaseAgent "1" *-left- "1" NodePool
-BaseAgent "1" *-right- "1" Wallet
+_AgentCore "1" *-up- "1" SchemaStore
+_AgentCore "1" *-left- "1" NodePool
+_AgentCore "1" *-right- "1" Wallet
 
-BaseAgent <|-down- BaseListeningAgent
-BaseListeningAgent <|-left- AgentRegistrar
-BaseListeningAgent <|-left- Origin
-BaseListeningAgent <|-right- HolderProver
-BaseListeningAgent <|-right- Verifier
+_AgentCore <|-down- _BaseAgent
+_BaseAgent <|-left- AgentRegistrar
+_BaseAgent <|-left- Origin
+_BaseAgent <|-right- HolderProver
+_BaseAgent <|-right- Verifier
 
 AgentRegistrar <|-down- TrustAnchorAgent
 Origin <|-down- TrustAnchorAgent
