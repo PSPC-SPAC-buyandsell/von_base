@@ -28,24 +28,29 @@ actor "Holder-Prover\n(The Org Book)\nAgent" as obag
 actor "Issuer\n(BC Registrar)\nAgent" as bcrag
 actor "Actuator" as ator
 
+=== CLAIM LOAD SEQUENCE ==
+
 ator -> obag: GET <get-did>
 obag --> ator: DID
 
-=== CLAIM LOAD SEQUENCE ==
 note over ledger, ator
 All agent service wrapper APIs are up
 Schema, claim definitions are on ledger
 endnote
 
-ator -> bcrag: POST <claim-hello>, proxy to Holder-Prover DID
+ator -> bcrag: POST <claim-offer-create>
+bcrag -> bcrag: create claim offer
+bcrag --> ator: claim offer
+
+ator -> bcrag: POST <claim-offer-store>, proxy to Holder-Prover DID
 bcrag -> ledger: get endpoint for Holder-Prover DID
 ledger --> bcrag: Holder-Prover endpoint
-bcrag -> obag: POST <claim-hello>
-obag -> obag: get schema from cache
+bcrag -> obag: POST <claim-offer-store>
 obag -> obag: store claim offer
+obag -> obag: get schema from store
 obag -> ledger: get claim definition
 ledger --> obag: claim definition
-obag -> obag: store claim request
+obag -> obag: create and store claim request
 obag --> bcrag: claim request
 bcrag --> ator: claim request
 
@@ -64,4 +69,3 @@ loop for each claim
 end
 
 @enduml
-

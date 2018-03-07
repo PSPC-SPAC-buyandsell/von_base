@@ -37,12 +37,16 @@ sag -> ator: True
 
 === CLAIM LOAD SEQUENCE ==
 
-ator -> sag: POST <claim-hello>, proxy to Holder-Prover DID
+ator -> sag: POST <claim-offer-create>
+sag -> sag: create claim offer
+sag --> ator: claim offer
+
+ator -> sag: POST <claim-offer-store>, proxy to Holder-Prover DID
 sag -> ledger: get endpoint for Holder-Prover DID
 ledger --> sag: Holder-Prover endpoint
-sag -> obag: POST <claim-hello>
-obag -> obag: get schema from cache
+sag -> obag: POST <claim-offer-store>
 obag -> obag: store claim offer
+obag -> obag: get schema from store
 obag -> ledger: get claim definition
 ledger --> obag: claim definition
 obag -> obag: store claim request
