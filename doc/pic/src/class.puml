@@ -36,13 +36,13 @@ class SchemaStore {
 class Wallet {
     -_seed
     +pool_name
-    +base_name
     +name
-    +num
+    +xtype
     +handle
-    +cfg_json
     +did
     +verkey
+    +cfg
+    +creds
 }
 
 class NodePool {
