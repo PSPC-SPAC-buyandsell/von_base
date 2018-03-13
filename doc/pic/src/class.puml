@@ -42,7 +42,9 @@ class Wallet {
     +did
     +verkey
     +cfg
+    +auto_remove
     +creds
+    +created
 }
 
 class NodePool {
