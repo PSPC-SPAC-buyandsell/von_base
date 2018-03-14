@@ -35,7 +35,7 @@ class SchemaStore {
 
 class Wallet {
     -_seed
-    +pool_name
+    +pool
     +name
     +xtype
     +handle
@@ -45,6 +45,7 @@ class Wallet {
     +auto_remove
     +creds
     +created
+    -_seed2did()
 }
 
 class NodePool {
