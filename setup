@@ -27,7 +27,7 @@ then
 fi
 
 DIR_TOP="$(readlink -f $(dirname ${BASH_SOURCE[0]}))"
-DIR_VON=$(dirname "${DIR_TOP}")  # container for von_base/, von_agent/, von_connector/ holds pipenv virtual environment
+DIR_VON=$(dirname "${DIR_TOP}")  # container for von_base/, von_agent/, von_con_x/ holds pipenv virtual environment
 DIR_FILES="${DIR_TOP}/files"
 OPERATOR=${SUDO_USER}
 
@@ -48,14 +48,19 @@ then
     usermod -a -G docker ${OPERATOR}
 fi
 
-# build docker network
-INDY_POOL_NETWORK=$(docker network ls --filter name=indy_pool_network | sed '1,1d' | wc -l)
-if [[ "${INDY_POOL_NETWORK}" -eq "0" ]]
+# build docker networks
+NETWORK=$(docker network ls --filter name=indy_pool_network | sed '1,1d' | wc -l)
+if [[ "${NETWORK}" -eq "0" ]]
 then
-    sudo -u ${OPERATOR} docker network create --subnet 10.0.0.0/8 indy_pool_network
+    sudo -u ${OPERATOR} docker network create --subnet 10.0.0.0/24 indy_pool_network
+fi
+NETWORK=$(docker network ls --filter name=von_conx_network | sed '1,1d' | wc -l)
+if [[ "${NETWORK}" -eq "0" ]]
+then
+    sudo -u ${OPERATOR} docker network create --subnet 10.0.1.0/24 von_conx_network
 fi
 
-# build docker image
+# build indy_pool_net docker image (in case deploying von_agent without von_conx which rebuilds it via docker-compose)
 INDY_POOL=$(docker images --filter reference=indy_pool | sed '1,1d' | wc -l)
 if [[ "${INDY_POOL}" -eq "0" ]]
 then
@@ -66,3 +71,11 @@ fi
 cd "${DIR_FILES}"
 tar -xpvzf libindy.so.tgz &> /dev/null
 mv libindy.so /usr/lib/
+
+# docker-compose
+DC_VERSION=$(git ls-remote https://github.com/docker/compose | grep refs/tags | grep -oP "[0-9]+\.[0-9][0-9]+\.[0-9]+$" | tail -n 1)
+ARCH="$(uname -s)-$(uname -m)"
+curl -L https://github.com/docker/compose/releases/download/${DC_VERSION}/docker-compose-${ARCH} > /usr/local/bin/docker-compose
+chmod +x /usr/local/bin/docker-compose
+curl -L https://raw.githubusercontent.com/docker/compose/${DC_VERSION}/contrib/completion/bash/docker-compose > /etc/bash_completion.d/docker-compose
+
