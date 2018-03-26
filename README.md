@@ -17,10 +17,10 @@ $ logout
 (login)
 $ test/test_base
 ```
-to test the success of the installation (`test_base` should echo `0`). Proceed to the installation of components `von_agent` and `von_connector`.
+to test the success of the installation (`test_base` should echo `0`). Proceed to the installation of components `von_agent` and `von_conx`.
 
 ## Documentation
 The design document at `doc/agent-design.doc` discusses in detail the packages comprising the technology demonstrator project:
   - `von_base`
   - `von_agent`
-  - `von_connector`.
+  - `von_conx`.
