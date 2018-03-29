@@ -27,13 +27,19 @@ package von_agent {
     [agent code] as agent_code
 }
 
-package von_connector {
-    [service wrapper API] as service_wrapper_api
+package von_conx {
+    [service wrapper API] as von_conx_service_wrapper_api
 }
 
-service_wrapper_api ..> pipenv
+package von_connector {
+    [service wrapper API] as von_conn_service_wrapper_api
+}
+
+von_conx_service_wrapper_api ..> pipenv
+von_conx_service_wrapper_api <..> agent_code: use
+von_conn_service_wrapper_api .up.> pipenv
+von_conn_service_wrapper_api <.up.> agent_code: use
 agent_code ..> pipenv
-service_wrapper_api <..> agent_code: use
 agent_code ..> libindy: use
 libindy .down.> docker_network
 docker_network .down.>docker

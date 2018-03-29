@@ -17,13 +17,21 @@ limitations under the License.
 
 title Class Diagram
 
+class ErrorCode {
+}
+
+class VonAgentError {
+    + error_code
+    + message
+}
+
 class SchemaKey {
     origin_did
     name
     version
 }
 
-class SchemaStore {
+class SchemaCache {
     -_schema_key2schema
     -_seq_no2schema_key
     +__setitem__()
@@ -129,9 +137,13 @@ class OrgBookAgent {
     +process_post()
 }
 
-_AgentCore "1" *-up- "1" SchemaStore
-_AgentCore "1" *-left- "1" NodePool
+VonAgentError "1" *-up- "1" ErrorCode
+SchemaCache -left-> SchemaKey
+_AgentCore -left-> SchemaKey
+
+_AgentCore -up-> SchemaCache
 _AgentCore "1" *-right- "1" Wallet
+Wallet "1" *-up- "1" NodePool
 
 _AgentCore <|-down- _BaseAgent
 _BaseAgent <|-left- AgentRegistrar
