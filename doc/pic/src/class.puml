@@ -34,11 +34,16 @@ class SchemaKey {
 class SchemaCache {
     -_schema_key2schema
     -_seq_no2schema_key
+    +lock
     +__setitem__()
     +__getitem__()
     +contains()
     +index()
     +schema_key_for()
+}
+
+class ClaimDefCache{
+    +lock
 }
 
 class Wallet {
@@ -145,6 +150,7 @@ _AgentCore -up-> SchemaCache
 _AgentCore "1" *-right- "1" Wallet
 Wallet "1" *-up- "1" NodePool
 
+_BaseAgent -up-> ClaimDefCache
 _AgentCore <|-down- _BaseAgent
 _BaseAgent <|-left- AgentRegistrar
 _BaseAgent <|-left- Origin
