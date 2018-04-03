@@ -66,16 +66,27 @@ username=sri-von
 password=Apple1995!
 ```
 
-Reflect the new version number in `~/von_connector/service_wrapper_project/requirements.txt`
+Reflect the new version number in `~/von_connector/service_wrapper_project/requirements.txt`, plus both `~von_conx/src/requirements.txt` and `~von_conx/src/test/requirements.txt`. Then at the prompt, issue
 ```
 $ cd ~/von_connector
 $ pipenv install -r service_wrapper_project/requirements.txt
+$ cd ~/von_conx
+$ pipenv install -r src/test/requirements.txt
 ```
-and use git to commit and push the delta to the `requirements.txt` file.
+and use git to commit, then push, the delta to the `requirements.txt` files of the VON connector projects.
 
-If the indy-sdk delta drives any changes to the high-level von_agent APIs or the VON protocol, update the `~/von_connector/service_wrapper_project/wrapper_api/*` code base and `~/von_connector/service_wrapper_project/wrapper_api/test/test_wrapper.py` test driver accordingly and test:
+If the indy-sdk delta drives any changes to the high-level von_agent APIs or the VON protocol, update the code bases of the VON connector projects (`~/von_connector/service_wrapper_project/wrapper_api/*`, `~/von_connector/service_wrapper_project/wrapper_api/test/test_wrapper.py, `~/von_conx/src/app/`, and `~/von_conx/src/test/test_wrapper.py`; at the prompt, issue the following to test:
 ```
 $ cd ~/von_connector/service_wrapper_project/wrapper_api/test
 $ pipenv run pytest -s test_wrapper.py
+$ cd ~/von_conx/docker
+$ ./manage stop
+$ ./manage rm
+$ ./manage build
+$ ./manage bg
+$ cd ~/von_conx/src/test
+$ pipenv run pytest -s test_wrapper.py
 ```
-Use git to commit and push any resulting code changes in the von_connector source or test code.
+(the operator may omit `./manage bg` above to have the test suite start docker containers in-band).
+
+Use git to commit and push any resulting code changes in the VON connector project source or test code bases.
