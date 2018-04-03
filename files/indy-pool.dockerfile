@@ -42,7 +42,7 @@ RUN echo '[supervisord]\n\
 logfile = /tmp/supervisord.log\n\
 logfile_maxbytes = 50MB\n\
 logfile_backups=10\n\
-logLevel = error\n\
+loglevel = trace\n\
 pidfile = /tmp/supervisord.pid\n\
 nodaemon = true\n\
 minfds = 1024\n\
@@ -60,24 +60,28 @@ command=start_indy_node Node1 9701 9702\n\
 directory=/home/indy\n\
 stdout_logfile=/tmp/node1.log\n\
 stderr_logfile=/tmp/node1.log\n\
+loglevel=trace\n\
 \n\
 [program:node2]\n\
 command=start_indy_node Node2 9703 9704\n\
 directory=/home/indy\n\
 stdout_logfile=/tmp/node2.log\n\
 stderr_logfile=/tmp/node2.log\n\
+loglevel=trace\n\
 \n\
 [program:node3]\n\
 command=start_indy_node Node3 9705 9706\n\
 directory=/home/indy\n\
 stdout_logfile=/tmp/node3.log\n\
 stderr_logfile=/tmp/node3.log\n\
+loglevel=trace\n\
 \n\
 [program:node4]\n\
 command=start_indy_node Node4 9707 9708\n\
 directory=/home/indy\n\
 stdout_logfile=/tmp/node4.log\n\
-stderr_logfile=/tmp/node4.log\n'\
+stderr_logfile=/tmp/node4.log\n\
+loglevel=trace\n'\
 >> /etc/supervisord.conf
 
 USER indy
