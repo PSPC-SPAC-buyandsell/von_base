@@ -32,7 +32,18 @@ DIR_FILES="${DIR_TOP}/files"
 OPERATOR=${SUDO_USER}
 
 # prerequisites
-apt update -y && apt install -y build-essential pkg-config cmake libssl-dev libsqlite3-dev libsodium-dev python3.5 python3-pip python3-nacl apt-transport-https ca-certificates
+apt update -y && apt install -y build-essential pkg-config cmake libssl-dev libsqlite3-dev libsodium-dev python3.5 python3-pip python3-nacl apt-transport-https ca-certificates libtool autoconf automake uuid-dev
+
+# zeromq
+if [[ "$(ldconfig -p | grep zmq.so | wc -l)" -ne "2" ]]
+then
+    wget https://github/com/\zeromq/libzmq/releases/download/v4.2.5/zeromq-4.2.5.tar.gz
+    tar xvzf zeromq-4.2.2.tar.gz
+    cd zeromq-4.2.5
+    ./configure
+    make install
+    ldconfig
+fi
 
 # python virtual environment (setup as non-sudo)
 cd "${DIR_VON}"
