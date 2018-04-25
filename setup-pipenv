@@ -24,7 +24,7 @@ then
 fi
 
 # pipenv
-pip3 install --trusted-host pypi.python.org --upgrade pip
+pip3 install --trusted-host pypi.python.org --upgrade pip==9.0.3
 pip3 install --trusted-host pypi.python.org --user pipenv
 
 pipenv --three
