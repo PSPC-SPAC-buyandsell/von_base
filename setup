@@ -37,12 +37,15 @@ apt update -y && apt install -y build-essential pkg-config cmake libssl-dev libs
 # zeromq
 if [[ "$(ldconfig -p | grep zmq.so | wc -l)" -ne "2" ]]
 then
-    wget https://github/com/\zeromq/libzmq/releases/download/v4.2.5/zeromq-4.2.5.tar.gz
-    tar xvzf zeromq-4.2.2.tar.gz
+    wget https://github/com/zeromq/libzmq/releases/download/v4.2.5/zeromq-4.2.5.tar.gz
+    tar xvzf zeromq-4.2.5.tar.gz
     cd zeromq-4.2.5
     ./configure
     make install
     ldconfig
+    cd ..
+    rm zeromq-4.2.5.tar.gz
+    rm -rf zeromq-4.2.5
 fi
 
 # python virtual environment (setup as non-sudo)
