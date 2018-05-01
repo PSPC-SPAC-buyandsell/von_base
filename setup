@@ -26,18 +26,28 @@ then
     exit 1
 fi
 
-DIR_TOP="$(readlink -f $(dirname ${BASH_SOURCE[0]}))"
-DIR_VON=$(dirname "${DIR_TOP}")  # container for von_base/, von_agent/, von_con_x/ holds pipenv virtual environment
-DIR_FILES="${DIR_TOP}/files"
+DIR_VON_BASE="$(readlink -f $(dirname ${BASH_SOURCE[0]}))"
+DIR_VON=$(dirname "${DIR_VON_BASE}")  # container for von_base/, von_agent/, von_con_x/ holds pipenv virtual environment
+DIR_FILES="${DIR_VON_BASE}/files"
 OPERATOR=${SUDO_USER}
 
 # prerequisites
-apt update -y && apt install -y build-essential pkg-config cmake libssl-dev libsqlite3-dev libsodium-dev python3.5 python3-pip python3-nacl apt-transport-https ca-certificates
+apt update -y && apt install -y build-essential pkg-config cmake libssl-dev libsqlite3-dev libsodium-dev python3.5 python3-pip python3-nacl apt-transport-https ca-certificates libtool autoconf automake uuid-dev
 
-# python virtual environment (setup as non-sudo)
-cd "${DIR_VON}"
-sudo -u ${OPERATOR} -i "${DIR_TOP}/setup-pipenv"
-cd -
+# zeromq
+if [[ "$(ldconfig -p | grep zmq.so | wc -l)" -ne "2" ]]
+then
+    VERSION=$(curl -s https://github.com/zeromq/libzmq/releases/latest | grep -oP '<a href="https://github.com/zeromq/libzmq/releases/tag/v.*">redirected</a>' | sed -e 's|.*tag/v||' | sed -e 's|".*||')
+    wget https://github.com/zeromq/libzmq/releases/download/v${VERSION}/zeromq-${VERSION}.tar.gz
+    tar xvzf zeromq-${VERSION}.tar.gz
+    cd zeromq-${VERSION}
+    ./configure
+    make install
+    ldconfig
+    cd ..
+    rm zeromq-${VERSION}.tar.gz
+    rm -rf zeromq-${VERSION}
+fi
 
 # docker
 update-ca-certificates
@@ -79,3 +89,7 @@ curl -L https://github.com/docker/compose/releases/download/${DC_VERSION}/docker
 chmod +x /usr/local/bin/docker-compose
 curl -L https://raw.githubusercontent.com/docker/compose/${DC_VERSION}/contrib/completion/bash/docker-compose > /etc/bash_completion.d/docker-compose
 
+# python virtual environment (setup as non-sudo)
+cd "${DIR_VON}"
+sudo -u ${OPERATOR} -i "${DIR_VON_BASE}/setup-pipenv"
+cd -
