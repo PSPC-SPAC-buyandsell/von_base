@@ -1,0 +1,67 @@
+@startuml
+/'
+Copyright 2017-2018 Government of Canada - Public Services and Procurement Canada - buyandsell.gc.ca
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+'/
+
+skinparam ParticipantPadding 20
+skinparam BoxPadding 20
+
+title Credential Load Sequence
+
+box "Indy" #LightBlue
+    participant "Ledger" as ledger
+endbox
+
+actor "Holder-Prover\n(The Org Book)\nAgent" as obag
+actor "Issuer\n(BC Registrar)\nAgent" as bcrag
+actor "Actuator" as ator
+
+=== CREDENTIAL LOAD SEQUENCE ==
+
+note over ledger, ator
+All agent service wrapper APIs are up
+Schema, cred defs, rev reg defs are on ledger
+endnote
+
+ator -> bcrag: call create_cred_offer(schema_seq_no)
+bcrag -> ledger: get cred def
+ledger --> bcrag: cred def
+bcrag -> bcrag: create and store cred offer
+bcrag --> ator: cred_offer
+
+ator -> obag: call create_cred_req(cred_offer, cred_def)
+obag -> obag: create cred req and metadata
+bcrag --> ator: cred_req, metadata
+
+loop for each cred
+    ator -> bcrag: call create_cred(cred_offer, cred_req, attrs)
+    bcrag -> bcrag: create cred
+    alt cred def creation indicates rev reg full
+        obag -> obag: create next rev reg
+        obag -> obag: sync rev reg
+        obag -> obag call create_cred()
+    end
+    bcrag --> ator: cred, cred revocation identifier
+    ator -> obag: call store_cred(cred, metadata)
+    alt cred specifies rev reg
+        obag -> obag: sync rev reg
+        obag -> ledger: get rev reg def
+        ledger --> obag: rev reg def
+    end
+    obag -> obag: store cred
+    obag --> ator: cred id in wallet
+end
+
+@enduml

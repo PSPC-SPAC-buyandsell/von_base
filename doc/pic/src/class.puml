@@ -21,14 +21,14 @@ class ErrorCode {
 }
 
 class VonAgentError {
-    + error_code
-    + message
+    +error_code
+    +message
 }
 
-class SchemaKey {
-    origin_did
-    name
-    version
+class SchemaKey << namedtuple >> {
+    +origin_did
+    +name
+    +version
 }
 
 class SchemaCache {
@@ -46,7 +46,31 @@ class ClaimDefCache{
     +lock
 }
 
+class Tails {
+    +reader_handle
+    +rr_id
+    +path
+    +open()
+    {static} +associate()
+    {static} +dir()
+    {static} +linked()
+    {static} +links()
+    {static} +unlinked()
+    {static} +next_tag()
+    {static} +current_rev_reg_id()
+}
+
+class RevoCacheEntry {
+    +rev_reg_def
+    +tails
+}
+
+class RevoCache{
+    +lock
+}
+
 class Wallet {
+    -_seed2did()
     -_seed
     +pool
     +name
@@ -58,13 +82,15 @@ class Wallet {
     +auto_remove
     +creds
     +created
-    -_seed2did()
 }
 
 class NodePool {
     +name
     +genesis_txn_path
     +handle
+    +cfg
+    +auto_remove
+    +remove()
     +open()
     +close()
 }
@@ -78,68 +104,67 @@ class _AgentCore {
     +close()
     +get_nym()
     +get_schema()
-    +get_endpoint()
+    +role()
 }
 
 class _BaseAgent {
     +cfg
-    -_response_from_proxy()
-    -_mro_dispatch()
-    +send_endpoint()
-    +get_claim_def()
-    +process_post()
+    -_get_rev_reg_def()
+    +get_cred_def()
     +process_get_txn()
     +process_get_did()
 }
 
 class AgentRegistrar {
     +send_nym()
-    +process_post()
 }
 
 class Origin {
     +send_schema()
-    +process_post()
 }
 
 class Issuer {
-    +send_claim_def()
-    +create_claim_offer()
-    +create_claim()
-    +process_post()
+    -_create_rev_reg()
+    -_sync_revoc()
+    +open()
+    +close()
+    +path_tails()
+    +send_cred_def()
+    +create_cred_offer()
+    +create_cred()
+    +revoke_cred()
 }
 
 class HolderProver {
     -_master_secret
-    +create_master_secret()
-    +store_claim_req()
-    +store_claim()
+    -_sync_revoc()
+    +open()
+    +close()
+    +path_tails()
+    +create_link_secret()
+    +create_cred_req()
+    +store_cred()
+    +get_creds_display_coarse()
+    +get_creds()
+    +get_creds_by_id()
     +create_proof()
-    +get_claims()
-    +get_claim_by_referent()
     +reset_wallet()
-    +process_post()
 }
 
 class Verifier {
     +verify_proof()
-    +process_post()
 }
 
 class TrustAnchorAgent {
-    +process_post()
 }
 
 class SRIAgent {
-    +process_post()
 }
 
 class BCRegistrarAgent {
-    +process_post()
 }
 
 class OrgBookAgent {
-    +process_post()
 }
 
 VonAgentError "1" *-up- "1" ErrorCode
@@ -149,6 +174,12 @@ _AgentCore -left-> SchemaKey
 _AgentCore -up-> SchemaCache
 _AgentCore "1" *-right- "1" Wallet
 Wallet "1" *-up- "1" NodePool
+
+RevoCacheEntry -left-> Tails
+
+RevoCache -up-> RevoCacheEntry
+
+_BaseAgent -up-> RevoCache
 
 _BaseAgent -up-> ClaimDefCache
 _AgentCore <|-down- _BaseAgent

@@ -15,20 +15,30 @@ See the License for the specific language governing permissions and
 limitations under the License.
 '/
 
-package von_base {
-    [docker] as docker
-    [libindy] as libindy
-    [docker-network] as docker_network
-    [pipenv] as pipenv
-    [docs]
-}
+skinparam ParticipantPadding 20
+skinparam BaloxPadding 20
 
-package von_agent {
-    [agent code] as agent_code
-}
+title Verifier Agent Boot Sequence
 
-agent_code ..> pipenv
-agent_code ..> libindy: use
-libindy .down.> docker_network
-docker_network .down.>docker
+
+box "Indy" #LightBlue
+    participant "Ledger" as ledger
+endbox
+actor "Trust Anchor\nAgent" as tag
+actor "Verifier\n(e.g., SRI)\nAgent" as sag
+
+=== BOOTSTRAP ==
+note over ledger, sag
+Trust anchor agent service wrapper API is up
+endnote
+
+sag -> ledger: Look up own nym
+ledger --> sag: nym if present
+alt Nym not present
+    sag -[#blue]> tag: call send_nym(did, verkey, alias, role)
+    tag -[#blue]> ledger: send nym
+    ledger --[#blue]> tag: nym
+    tag --[#blue]> sag: nym
+end
+
 @enduml

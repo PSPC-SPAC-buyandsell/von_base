@@ -18,38 +18,28 @@ limitations under the License.
 skinparam ParticipantPadding 20
 skinparam BaloxPadding 20
 
-title Trust Anchor Agent Boot Sequence
-
+title Holder-Prover Agent Boot Sequence
 
 box "Indy" #LightBlue
     participant "Ledger" as ledger
 endbox
-actor "Trust Anchor\n(Origin)\nAgent" as tag
+actor "Trust Anchor\nAgent" as tag
+actor "Holder-Prover\n(e.g., The Org Book)\nAgent" as obag
 
 === BOOTSTRAP ==
-note over ledger, tag
-Starting from genesis transactions on node pool: no data exist yet
+note over ledger, obag
+Trust anchor agent service wrapper API is up
 endnote
 
-
-note over ledger, tag
-Trust Anchor agent boots before any relying agents
-endnote
-
-tag -> ledger: Look up own nym
-alt Nym present
-    ledger --> tag: returns agent nym
-else Nym not present
+obag -> ledger: Look up own nym
+ledger --> obag: nym if present
+alt Nym not present
+    obag -[#blue]> tag: call send_nym(did, verkey, alias, role)
     tag -[#blue]> ledger: send agent nym
-    ledger --[#blue]> tag: returns agent nym
+    ledger --[#blue]> tag: agent nym
+    tag --[#blue]> obag: agent nym
 end
 
-tag -> ledger: Look up endpoint attribution
-alt Endpoint attribution present
-    ledger --> tag: returns agent-endpoint
-else Endpoint attribution not present
-    tag -[#blue]> ledger: send agent endpoint
-    ledger --[#blue]> tag: returns agent endpoint
-end
+obag -> obag: create, store link secret
 
 @enduml

@@ -18,58 +18,44 @@ limitations under the License.
 skinparam ParticipantPadding 20
 skinparam BaloxPadding 20
 
-title SRI Agent Boot Sequence
-
+title Issuer Agent Boot Sequence
 
 box "Indy" #LightBlue
     participant "Ledger" as ledger
 endbox
-actor "Trust Anchor\n(Origin)\nAgent" as tag
-actor "Verifier/Issuer\n(SRI)\nAgent" as sag
+actor "Trust Anchor\nAgent" as tag
+actor "Holder/Prover\n(e.g., The Org Book)\nAgent" as obag
+actor "Origin+Issuer\n(e.g., BC Registrar)\nAgent" as bcrag
 
 === BOOTSTRAP ==
-note over ledger, sag
+note over ledger, bcrag
+Issuer agent is also Origin agent
 Trust anchor agent service wrapper API is up
 endnote
 
-sag -> tag: get DID
-tag --> sag: trust anchor DID
-
-sag -> ledger: Look up own nym
-alt Nym present
-    ledger --> sag: nym
-else Nym not present
-    sag -[#blue]> tag: POST <agent-nym-send>
+bcrag -> ledger: Look up own nym
+ledger --> bcrag: nym if present
+alt Nym not present
+    bcrag -[#blue]> tag: call send_nym(did, verkey, alias, role)
     tag -[#blue]> ledger: send Issuer nym
     ledger --[#blue]> tag: Issuer nym
-    tag --[#blue]> sag: Issuer nym
+    tag --[#blue]> bcrag: Issuer nym
 end
 
-sag -> ledger: Look up endpoint attribution
-alt Endpoint attribution present
-    ledger --> sag: agent endpoint
-else Endpoint attribution not present
-    sag -[#blue]> ledger: send agent endpoint
-    ledger --[#blue]> sag: agent endpoint
-end
-
-loop for each schema that issuer originates
+loop each schema that issuer originates
     bcrag -> ledger: look up schema
-    alt Schema present
-        ledger --> bcrag: schema
-    else Schema not present
+    ledger --> bcrag: schema if present
+    alt Schema not present
         bcrag -[#blue]> ledger: send schema
         ledger --[#blue]> bcrag: return schema
     end
 
-    bcrag -> ledger: look up claim def
-    alt Claim def present
-        bcrag -> ledger: send claim definition
-    else Schema not present
-        bcrag -[#blue]> ledger: send claim def
+    bcrag -> ledger: look up cred def
+    ledger --> bcrag: cred def if present
+    alt Cred def not present
+        bcrag -[#blue]> ledger: send cred def
+        ledger -[#blue]-> bcrag: return cred def
     end
-
-    ledger --> bcrag: return
 end
 
 @enduml

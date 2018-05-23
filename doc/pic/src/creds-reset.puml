@@ -18,36 +18,24 @@ limitations under the License.
 skinparam ParticipantPadding 20
 skinparam BoxPadding 20
 
-title Claim Request Sequence
+title Credentials Reset Sequence
 
 box "Indy" #LightBlue
     participant "Ledger" as ledger
 endbox
 
 actor "Holder-Prover\n(The Org Book)\nAgent" as obag
-actor "Verifier\n(SRI)\nAgent" as sag
 actor "Actuator" as ator
 
-ator -> obag: GET <get-did>
-obag --> ator: DID
-
-=== CLAIM REQUEST SEQUENCE ==
+=== CREDENTIALS RESET SEQUENCE ==
 note over ledger, ator
 All agent service wrapper APIs are up
-Schema, claim definitions are on ledger
-Claim load sequence has stored claims at Holder-Prover
+Schema, cred defs are on ledger
+Cred load sequence has stored creds at Holder-Prover
 endnote
 
-ator -> sag: POST <claim-request> on filter, proxy to Holder-Prover DID
-sag -> ledger: get endpoint for Holder-Prover DID
-ledger --> sag: Holder-Prover endpoint
-sag --> obag: POST <claim-request>
-obag -> obag: get claims
-obag --> sag: claims
-sag --> ator:  claims
-
-ator -> ator: claims_for(more filtration)
-ator -> ator: select claim of interest/get claim_uuid
-ator -> ator: prune_claims_json(claim_uuid)
+ator --> obag: call creds_reset()
+obag -> obag: reset wallet, link secret
+obag --> ator:  returns
 
 @enduml
