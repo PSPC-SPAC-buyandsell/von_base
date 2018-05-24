@@ -31,11 +31,13 @@ actor "Actuator" as ator
 note over ledger, ator
 All agent service wrapper APIs are up
 Schema, cred defs are on ledger
-Cred load sequence has stored creds at Holder-Prover
+Cred load sequence has stored creds at Holder-Prover agent
 endnote
 
 ator --> obag: call creds_reset()
-obag -> obag: reset wallet, link secret
-obag --> ator:  returns
+group creds_reset() implements
+    obag -> obag: reset wallet, link secret
+    obag --> ator:  OK
+end
 
 @enduml

@@ -32,13 +32,18 @@ note over ledger, sag
 Trust anchor agent service wrapper API is up
 endnote
 
-sag -> ledger: Look up own nym
-ledger --> sag: nym if present
+sag -> sag: call get_nym(did)
+group get_nym() implements
+    sag -> ledger: Look up own nym
+    ledger --> sag: nym if present
+end
 alt Nym not present
     sag -[#blue]> tag: call send_nym(did, verkey, alias, role)
-    tag -[#blue]> ledger: send nym
-    ledger --[#blue]> tag: nym
-    tag --[#blue]> sag: nym
+    group send_nym() implements
+        tag -[#blue]> ledger: send agent nym
+        ledger --[#blue]> tag: agent nym
+        tag --[#blue]> sag: agent nym
+    end
 end
 
 @enduml

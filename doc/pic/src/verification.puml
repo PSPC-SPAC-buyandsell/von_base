@@ -18,34 +18,30 @@ limitations under the License.
 skinparam ParticipantPadding 20
 skinparam BoxPadding 20
 
-title Credential Revocation Sequence
+title Verification Sequence
 
 box "Indy" #LightBlue
     participant "Ledger" as ledger
 endbox
 
-actor "Holder-Prover\n(The Org Book)\nAgent" as obag
-actor "Issuer\n(BC Registrar)\nAgent" as bcrag
+actor "Verifier\n(e.g., SRI)\nAgent" as sag
 actor "Actuator" as ator
 
-=== CREDENTIAL REVOCATION SEQUENCE ==
-
-note over ledger, ator
-All agent service wrapper APIs are up
-Schema, cred defs, rev reg defs are on ledger
-endnote
-
-ator -> obag: call get_creds()
-obag -> obag: get creds structure
-obag --> ator: creds
-ator -> ator: call revoc_info(creds, filt)
-ator -> ator: choose (rev_reg_id, cred_rev_id)
-
-ator -> bcrag: call revoke_cred(rev_reg_id, cred_rev_id)
-bcrag -> bcrag: generate rev reg delta from tails
-bcrag -> ledger: send rev reg entry
-ledger --> bcrag: response
-bcrag -> bcrag: extract transaction time
-bcrag --> ator: (epoch) transaction time
+=== VERIFICATION SEQUENCE ==
+ator -> sag: call verify_proof(proof_req, proof)
+group verify_proof() implements
+    loop each identifier in proof
+        sag -> ledger: get schema
+        ledger --> sag: schema
+        sag -> ledger: get cred def
+        ledger --> sag: cred def
+        sag -> ledger: get rev reg def
+        ledger --> sag: rev reg def
+        sag -> ledger: get rev reg state
+        ledger --> sag: rev reg state 
+    end
+    sag -> sag: verify proof
+    sag -> ator: True or False
+end
 
 @enduml

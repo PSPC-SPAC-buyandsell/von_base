@@ -31,13 +31,19 @@ note over ledger, obag
 Trust anchor agent service wrapper API is up
 endnote
 
-obag -> ledger: Look up own nym
-ledger --> obag: nym if present
+obag -> obag: call get_nym(did)
+group get_nym() implements
+    obag -> ledger: Look up agent nym
+    ledger --> obag: agent nym if present
+end
+
 alt Nym not present
     obag -[#blue]> tag: call send_nym(did, verkey, alias, role)
-    tag -[#blue]> ledger: send agent nym
-    ledger --[#blue]> tag: agent nym
-    tag --[#blue]> obag: agent nym
+    group send_nym() implements
+        tag -[#blue]> ledger: send agent nym
+        ledger --[#blue]> tag: agent nym
+        tag --[#blue]> obag: agent nym
+    end
 end
 
 obag -> obag: create, store link secret

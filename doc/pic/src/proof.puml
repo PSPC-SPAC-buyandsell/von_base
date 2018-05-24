@@ -1,0 +1,88 @@
+@startuml
+/'
+Copyright 2017-2018 Government of Canada - Public Services and Procurement Canada - buyandsell.gc.ca
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+'/
+
+skinparam ParticipantPadding 20
+skinparam BoxPadding 20
+
+title Proof Sequences
+
+box "Indy" #LightBlue
+    participant "Ledger" as ledger
+endbox
+
+actor "Holder-Prover\n(e.g., The Org Book)\nAgent" as obag
+actor "Issuer\n(e.g., BC Registrar)\nAgent" as bcrag
+actor "Actuator" as ator
+
+=== TAILS FILE MARSHALLING SEQUENCE ==
+note over ledger, ator
+All agent service wrapper APIs are up
+Actuator has creds of interest
+endnote
+
+ator -> ator: call revoc_info(creds)\nto get rev reg id
+ator -> bcrag: call service wrapper to download tails file for rev reg id
+group #lightPink service wrapper must implement
+    bcrag -> bcrag: call path_tails(rev_reg_id)
+    group path_tails() implements
+        bcrag -> bcrag: call Tails.linked() to get tails file for rev reg id
+    end
+    bcrag --> ator: tails file
+end
+
+ator -> obag: call service wrapper to upload tails file
+group #lightPink service wrapper must implement
+    obag -> obag: call Tails.dir() to get correct directory for tails file
+    obag -> obag: save tails file
+    obag -> ator: OK
+end
+
+=== PROOF CREATION SEQUENCE ==
+note over ledger, ator
+All agent service wrapper APIs are up
+Schema, cred defs, rev reg defs are on ledger
+Actuator has creds of interest
+endnote
+
+ator -> obag: call create_proof(proof_req, creds, requested_creds)
+group create_proof() implements
+    loop each schema in creds
+        obag -> ledger: get schema
+        ledger --> obag: schema
+    end
+
+    loop each cred def in creds
+        obag -> ledger: get cred def
+        ledger --> obag: cred def
+    end
+
+    loop each rev reg in creds
+        obag -> ledger: get rev reg def
+        ledger --> obag: rev reg def
+        obag -> obag: sync rev reg to tails file
+        alt no such tails file
+            obag -[#blue]-> ator: absent tails file
+        end
+        obag -> ledger: get rev reg delta for interval
+        ledger --> obag: rev reg delta
+    end
+    obag -> obag: construct all rev reg states
+    obag -> obag: create proof from creds, requested_creds, rev reg states
+    obag --> ator: proof
+end
+
+@enduml

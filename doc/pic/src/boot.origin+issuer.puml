@@ -33,28 +33,48 @@ Issuer agent is also Origin agent
 Trust anchor agent service wrapper API is up
 endnote
 
-bcrag -> ledger: Look up own nym
-ledger --> bcrag: nym if present
+bcrag -> bcrag: call get_nym(did)
+group get_nym() implements
+    bcrag -> ledger: Look up own nym
+    ledger --> bcrag: nym if present
+end
 alt Nym not present
     bcrag -[#blue]> tag: call send_nym(did, verkey, alias, role)
-    tag -[#blue]> ledger: send Issuer nym
-    ledger --[#blue]> tag: Issuer nym
-    tag --[#blue]> bcrag: Issuer nym
+    group send_nym() implements
+        tag -[#blue]> ledger: send Issuer nym
+        ledger --[#blue]> tag: Issuer nym
+        tag --[#blue]> bcrag: Issuer nym
+    end
 end
 
 loop each schema that issuer originates
-    bcrag -> ledger: look up schema
-    ledger --> bcrag: schema if present
-    alt Schema not present
-        bcrag -[#blue]> ledger: send schema
-        ledger --[#blue]> bcrag: return schema
+    bcrag -> bcrag: call send_schema()
+    group send_schema() implements
+        bcrag -> ledger: look up schema
+        ledger --> bcrag: schema if present
+
+        alt Schema not present
+            bcrag -[#blue]> ledger: send schema
+            ledger --[#blue]> bcrag: return schema
+        end
     end
 
-    bcrag -> ledger: look up cred def
-    ledger --> bcrag: cred def if present
-    alt Cred def not present
-        bcrag -[#blue]> ledger: send cred def
-        ledger -[#blue]-> bcrag: return cred def
+    bcrag -> bcrag: call send_cred_def()
+    group send_cred_def() implements
+        bcrag -> ledger: look up cred def
+        ledger --> bcrag: cred def if present
+        alt Cred def not present
+            bcrag -[#blue]> bcrag: create cred def
+            bcrag -[#blue]> ledger: send cred def
+            ledger -[#blue]-> bcrag: cred def
+            alt Cred def supports revocation
+                bcrag -[#blue]> bcrag: define rev reg, create tails file
+                bcrag -[#blue]> ledger: send rev reg def
+                ledger -[#blue]-> bcrag: rev reg id
+                bcrag -[#blue]> ledger: send initial rev reg state
+                ledger -[#blue]-> bcrag: OK
+            end
+        end
     end
 end
 

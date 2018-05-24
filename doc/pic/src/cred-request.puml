@@ -31,20 +31,28 @@ actor "Actuator" as ator
 note over ledger, ator
 All agent service wrapper APIs are up
 Schema, cred defs are on ledger
-Cred load sequence has stored creds at Holder-Prover
+Cred load sequence has stored creds at Holder-Prover agent
 endnote
 
 alt by components of schema id or cred def id
     ator --> obag: call get_creds_display_coarse(filt)
-    obag -> obag: get and filter creds
+    group get_creds_display_coarse() implements
+        obag -> obag: get and filter creds
+        obag --> ator: list of individual creds
+    end
 else by attribute values
     ator --> obag: call get_creds(proof_req, filt)
-    obag -> obag: get and filter creds by filt
+    group get_creds() implements
+        obag -> obag: get and filter creds by filt
+        obag --> ator: indy-sdk creds structure
+    end
 else by cred id
     obag -> obag: call get_creds_by_id(proof_req, cred_ids)
-    obag -> obag: get and filter creds by cred_ids
+    group get_creds_by_id() implements
+        obag -> obag: get and filter creds by identifier
+        obag --> ator: indy-sdk creds structure
+    end
 end
-obag -> ator: creds
 
 alt more filtration post-hoc
     ator -> ator: call creds_display(creds, filt)
