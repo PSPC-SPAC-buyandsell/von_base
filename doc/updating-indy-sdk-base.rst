@@ -10,7 +10,7 @@ At the bash prompt, issue::
   $ git clone https://github.com/hyperledger/indy-sdk
   $ cp indy-sdk/ci/indy-pool.dockerfile ~/von_base/files
   $ cd indy-sdk/libindy
-  $ cargo build
+  $ cargo build --release
   $ cp target/debug/libindy.so ~/von_base/files
   $ cd ~/von_base/files
   $ sudo chown root:root libindy.so

@@ -46,7 +46,10 @@ end
 
 ator -> obag: call service wrapper to upload tails file
 group #lightPink service wrapper must implement
-    obag -> obag: call Tails.dir() to get correct directory for tails file
+    obag -> obag: call dir_tails() to get correct directory for tails file
+    group dir_tails() implements
+        obag -> obag: call Tails.dir() to get directory by rev reg id
+    end
     obag -> obag: save tails file
     obag -> ator: OK
 end

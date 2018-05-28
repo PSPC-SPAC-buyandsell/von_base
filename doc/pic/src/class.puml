@@ -95,22 +95,19 @@ class NodePool {
     +close()
 }
 
-class _AgentCore {
+class _BaseAgent {
     +pool
     +wallet
     +did
     +verkey
     +open()
     +close()
-    +get_nym()
-    +get_schema()
-    +role()
-}
-
-class _BaseAgent {
     +cfg
+    +get_nym()
+    +role()
     -_get_rev_reg_def()
     +get_cred_def()
+    +get_schema()
     +process_get_txn()
     +process_get_did()
 }
@@ -169,10 +166,10 @@ class OrgBookAgent {
 
 VonAgentError "1" *-up- "1" ErrorCode
 SchemaCache -left-> SchemaKey
-_AgentCore -left-> SchemaKey
+_BaseAgent -left-> SchemaKey
 
-_AgentCore -up-> SchemaCache
-_AgentCore "1" *-right- "1" Wallet
+_BaseAgent -up-> SchemaCache
+_BaseAgent "1" *-right- "1" Wallet
 Wallet "1" *-up- "1" NodePool
 
 RevoCacheEntry -left-> Tails
@@ -182,20 +179,18 @@ RevoCache -up-> RevoCacheEntry
 _BaseAgent -up-> RevoCache
 
 _BaseAgent -up-> ClaimDefCache
-_AgentCore <|-down- _BaseAgent
-_BaseAgent <|-left- AgentRegistrar
-_BaseAgent <|-left- Origin
-_BaseAgent <|-right- HolderProver
-_BaseAgent <|-right- Verifier
+_BaseAgent <|-down- AgentRegistrar
+_BaseAgent <|-down- Origin
+_BaseAgent <|-down- HolderProver
+_BaseAgent <|-down- Verifier
 
 AgentRegistrar <|-down- TrustAnchorAgent
-Origin <|-down- TrustAnchorAgent
 Origin <|-down- Issuer
 
 Issuer <|-down- SRIAgent
 Verifier <|-down- SRIAgent
 
-Issuer <|- BCRegistrarAgent
+Issuer <|-down- BCRegistrarAgent
 
 HolderProver <|-down- OrgBookAgent
 
