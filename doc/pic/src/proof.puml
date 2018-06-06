@@ -61,6 +61,14 @@ Schema, cred defs, rev reg defs are on ledger
 Actuator has creds of interest
 endnote
 
+ator -> obag: call build_proof_req_json(attrs, timestamps by cred def)
+obag -> obag: build proof_req
+obag --> ator: proof_req json
+
+ator -> obag: call build_req_creds_json(creds, filt)
+obag -> obag: build req_creds
+obag --> ator: req_creds json
+
 ator -> obag: call create_proof(proof_req, creds, requested_creds)
 group create_proof() implements
     loop each schema in creds
@@ -80,11 +88,11 @@ group create_proof() implements
         alt no such tails file
             obag -[#blue]-> ator: absent tails file
         end
-        obag -> ledger: get rev reg delta for interval
+        obag -> ledger: get rev reg delta at timestamp
         ledger --> obag: rev reg delta
     end
     obag -> obag: construct all rev reg states
-    obag -> obag: create proof from creds, requested_creds, rev reg states
+    obag -> obag: create proof
     obag --> ator: proof
 end
 

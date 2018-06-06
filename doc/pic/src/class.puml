@@ -63,6 +63,15 @@ class Tails {
 class RevoCacheEntry {
     +rev_reg_def
     +tails
+    +rr_delta_frames
+    +get_delta_json()
+}
+
+class RevRegDeltaFrame {
+    +qtime
+    +ask_for
+    +timestamp
+    +rr_delta
 }
 
 class RevoCache{
@@ -80,7 +89,7 @@ class Wallet {
     +verkey
     +cfg
     +auto_remove
-    +creds
+    +access_creds
     +created
 }
 
@@ -102,9 +111,12 @@ class _BaseAgent {
     +verkey
     +open()
     +close()
-    +cfg
+    +build_proof_req_json()
+    +build_req_creds_json()
     +get_nym()
     +role()
+    -_submit()
+    -_sign_submit()
     -_get_rev_reg_def()
     +get_cred_def()
     +get_schema()
@@ -124,7 +136,6 @@ class Issuer {
     -_create_rev_reg()
     -_sync_revoc()
     +open()
-    +close()
     +path_tails()
     +send_cred_def()
     +create_cred_offer()
@@ -135,9 +146,10 @@ class Issuer {
 class HolderProver {
     -_master_secret
     -_sync_revoc()
+    -_build_rr_delta_json()
+    +dir_tails()
     +open()
-    +close()
-    +path_tails()
+    +rev_regs()
     +create_link_secret()
     +create_cred_req()
     +store_cred()
@@ -173,7 +185,7 @@ _BaseAgent "1" *-right- "1" Wallet
 Wallet "1" *-up- "1" NodePool
 
 RevoCacheEntry -left-> Tails
-
+RevoCacheEntry "1" *-right- "n" RevRegDeltaFrame
 RevoCache -up-> RevoCacheEntry
 
 _BaseAgent -up-> RevoCache
