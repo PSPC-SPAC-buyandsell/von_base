@@ -32,6 +32,7 @@ DIR_FILES="${DIR_VON_BASE}/files"
 OPERATOR=${SUDO_USER}
 
 # prerequisites
+bash -c "LC_ALL=C.UTF-8 add-apt-repository -y ppa:ondrej/php"
 apt update -y && apt install -y build-essential pkg-config cmake libssl-dev libsqlite3-dev libsodium-dev libzmq3-dev python3.5 python3-pip python3-nacl apt-transport-https ca-certificates libtool autoconf automake uuid-dev
 
 # docker
