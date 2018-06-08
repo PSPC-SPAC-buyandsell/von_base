@@ -120,8 +120,7 @@ class _BaseAgent {
     -_get_rev_reg_def()
     +get_cred_def()
     +get_schema()
-    +process_get_txn()
-    +process_get_did()
+    +get_txn()
 }
 
 class AgentRegistrar {
