@@ -63,15 +63,18 @@ class Tails {
 class RevoCacheEntry {
     +rev_reg_def
     +tails
+    -_get_update()
     +rr_delta_frames
+    +rr_state_frames
     +get_delta_json()
+    +get_state_json()
 }
 
-class RevRegDeltaFrame {
+class RevRegUpdateFrame {
     +qtime
     +ask_for
     +timestamp
-    +rr_delta
+    +rr_update
 }
 
 class RevoCache{
@@ -81,7 +84,7 @@ class RevoCache{
 class Wallet {
     -_seed2did()
     -_seed
-    +pool
+    +poold
     +name
     +xtype
     +handle
@@ -160,6 +163,7 @@ class HolderProver {
 }
 
 class Verifier {
+    -_build_rr_state_json()
     +verify_proof()
 }
 
@@ -184,7 +188,7 @@ _BaseAgent "1" *-right- "1" Wallet
 Wallet "1" *-up- "1" NodePool
 
 RevoCacheEntry -left-> Tails
-RevoCacheEntry "1" *-right- "n" RevRegDeltaFrame
+RevoCacheEntry "2" *-right- "n" RevRegUpdateFrame
 RevoCache -up-> RevoCacheEntry
 
 _BaseAgent -up-> RevoCache
