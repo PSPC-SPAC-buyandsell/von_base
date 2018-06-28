@@ -35,11 +35,14 @@ class SchemaCache {
     -_schema_key2schema
     -_seq_no2schema_key
     +lock
-    +__setitem__()
     +__getitem__()
+    +__setitem__()
     +contains()
     +index()
     +schema_key_for()
+    +schemata()
+    +feed()
+    +clear()
 }
 
 class ClaimDefCache{
@@ -63,6 +66,7 @@ class Tails {
 class RevoCacheEntry {
     +rev_reg_def
     +tails
+    +cull()
     -_get_update()
     +rr_delta_frames
     +rr_state_frames
@@ -72,19 +76,26 @@ class RevoCacheEntry {
 
 class RevRegUpdateFrame {
     +qtime
-    +ask_for
     +timestamp
+    +to
     +rr_update
 }
 
-class RevoCache{
+class RevocationCache {
     +lock
+}
+
+class Caches {
+    {static} +clear()
+    {static} +archive()
+    {static} +parse()
+    {static} +purge_archives()
 }
 
 class Wallet {
     -_seed2did()
     -_seed
-    +poold
+    +pool
     +name
     +xtype
     +handle
@@ -94,6 +105,10 @@ class Wallet {
     +auto_remove
     +access_creds
     +created
+    +create()
+    +open()
+    +close()
+    +remove()
 }
 
 class NodePool {
@@ -114,10 +129,8 @@ class _BaseAgent {
     +verkey
     +open()
     +close()
-    +build_proof_req_json()
-    +build_req_creds_json()
     +get_nym()
-    +role()
+    {static} +role()
     -_submit()
     -_sign_submit()
     -_get_rev_reg_def()
@@ -127,6 +140,7 @@ class _BaseAgent {
 }
 
 class AgentRegistrar {
+    {static} +role()
     +send_nym()
 }
 
@@ -143,18 +157,26 @@ class Issuer {
     +create_cred_offer()
     +create_cred()
     +revoke_cred()
+    +get_box_ids_json()
 }
 
 class HolderProver {
-    -_master_secret
+    -_link_secret
     -_sync_revoc()
     -_build_rr_delta_json()
+    +cfg
+    +dir_cache
+    +build_proof_req_json()
+    +build_req_creds_json()
     +dir_tails()
     +open()
+    +close()
     +rev_regs()
     +create_link_secret()
     +create_cred_req()
     +store_cred()
+    +load_cache()
+    +get_box_ids_json()
     +get_creds_display_coarse()
     +get_creds()
     +get_creds_by_id()
@@ -164,6 +186,10 @@ class HolderProver {
 
 class Verifier {
     -_build_rr_state_json()
+    +cfg
+    +dir_cache
+    +load_cache()
+    +open()
     +verify_proof()
 }
 
@@ -187,9 +213,9 @@ _BaseAgent -up-> SchemaCache
 _BaseAgent "1" *-right- "1" Wallet
 Wallet "1" *-up- "1" NodePool
 
-RevoCacheEntry -left-> Tails
-RevoCacheEntry "2" *-right- "n" RevRegUpdateFrame
-RevoCache -up-> RevoCacheEntry
+RevoCacheEntry -up-> Tails
+RevoCacheEntry "2" *-down- "n" RevRegUpdateFrame
+RevocationCache -> RevoCacheEntry
 
 _BaseAgent -up-> RevoCache
 
@@ -208,5 +234,8 @@ Verifier <|-down- SRIAgent
 Issuer <|-down- BCRegistrarAgent
 
 HolderProver <|-down- OrgBookAgent
+
+HolderProver --> Caches
+Verifier --> Caches
 
 @enduml

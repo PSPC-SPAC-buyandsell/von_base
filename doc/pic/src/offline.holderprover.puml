@@ -1,0 +1,104 @@
+@startuml
+/'
+Copyright 2017-2018 Government of Canada - Public Services and Procurement Canada - buyandsell.gc.ca
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+'/
+
+skinparam ParticipantPadding 20
+skinparam BoxPadding 20
+
+title Priming Holder-Prover Agent for Off-Line Operation
+
+box "Indy" #LightBlue
+    participant "Ledger" as ledger
+endbox
+
+participant "Caches" as caches
+box "Holder-Prover" #Linen
+    participant "Archive" as archive
+    actor "Holder-Prover\nAgent" as hpag
+    participant "Wallet" as wallet
+endbox
+
+actor "Actuator" as ator
+
+=== CACHING CONTENT AND ARCHIVING ==
+note over ledger, ator
+    Holder-Prover agent node pool is open (agent is on-line)
+endnote
+
+ator -> hpag: init(config 'archive-cache-on-close': True)
+group init() implements
+    hpag -> hpag: validate and set config
+    hpag --> ator:
+end
+ator -> hpag: open()
+group open() implements
+    hpag -> wallet: open()
+    wallet --> hpag:
+    hpag --> ator:
+end
+
+note over ledger, ator
+    Actuator performs Holder-Prover session operations
+endnote
+
+ator -> hpag: close()
+group close() implements
+    hpag -> hpag: archive-cache-on-close? Yes
+    hpag -> hpag: load_cache(archive=True)
+    group load_cache() implements
+        hpag -> wallet: get all creds
+        wallet --> hpag: all creds
+        hpag -> hpag: get box ids from creds
+        hpag -> caches: load for box ids
+        caches -> ledger: get updates for missing box ids
+        ledger --> caches: updates
+        caches -> archive: write
+        archive --> caches:
+        caches --> hpag:
+    end
+    hpag -> archive: purge older than newest
+    archive --> hpag:
+    hpag --> ator:
+end
+
+=== OFF-LINE OPERATION ==
+note over ledger, ator
+    Holder-Prover agent node pool is closed (agent is off-line)
+endnote
+
+ator -> hpag: init(config 'parse-cache-on-open': True)
+group init() implements
+    hpag -> hpag: validate and set config
+    hpag --> ator:
+end
+ator -> hpag: open()
+group open() implements
+    hpag -> wallet: open()
+    wallet --> hpag:
+    hpag -> hpag: parse-cache-on-open? Yes
+    hpag -> caches: parse(cache dir)
+    caches -> archive: get most recent archive
+    archive --> caches: most recent archive
+    caches -> caches: parse from most recent archive
+    caches --> hpag: timestamp
+    hpag --> ator:
+end
+
+note over ledger, ator
+    Actuator performs Holder-Prover off-line session operations (from caches only)
+endnote
+
+@enduml

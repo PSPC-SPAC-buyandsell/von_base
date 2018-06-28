@@ -18,7 +18,7 @@ limitations under the License.
 skinparam ParticipantPadding 20
 skinparam BaloxPadding 20
 
-title Verifier Agent Boot Sequence
+title Verifier Agent On-Line Boot Sequence
 
 
 box "Indy" #LightBlue
@@ -29,7 +29,7 @@ actor "Verifier\n(e.g., SRI)\nAgent" as sag
 
 === BOOTSTRAP ==
 note over ledger, sag
-Trust anchor agent service wrapper API is up
+    Node pool is open (verifier agent is on-line)
 endnote
 
 sag -> sag: call get_nym(did)
@@ -38,6 +38,9 @@ group get_nym() implements
     ledger --> sag: nym if present
 end
 alt Nym not present
+    note over ledger, sag
+        Trust anchor agent service wrapper API is up
+    endnote
     sag -[#blue]> tag: call send_nym(did, verkey, alias, role)
     group send_nym() implements
         tag -[#blue]> ledger: send agent nym

@@ -1,0 +1,110 @@
+@startuml
+/'
+Copyright 2017-2018 Government of Canada - Public Services and Procurement Canada - buyandsell.gc.ca
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+'/
+
+skinparam ParticipantPadding 20
+skinparam BoxPadding 20
+
+title Priming Verifier Agent for Off-Line Operation
+
+box "Indy" #LightBlue
+    participant "Ledger" as ledger
+endbox
+
+participant "Caches" as caches
+box "Issuer and/or Holder-Prover" #Linen
+    participant "Archive" as archive
+    actor "Issuer\nAgent" as iag
+    actor "Holder-Prover\nAgent" as hpag
+endbox
+    actor "Verifier\nAgent" as vag
+
+actor "Actuator" as ator
+
+=== CACHING CONTENT AND ARCHIVING ==
+note over ledger, ator
+    All agents and node pool are open (agents are on-line)
+endnote
+
+alt verifier geared to issuer
+    ator -> iag: get_box_ids_json()
+    group get_box_ids_json() implements
+        iag -> iag: get box ids from Tails arborescence
+        iag --> ator: box ids
+    end
+end
+alt verifier geared to holder-prover
+    ator -> hpag: get_box_ids_json()
+    group get_box_ids() implements
+        hpag -> hpag: get box ids from wallet
+        hpag --> ator: box ids
+    end
+end
+
+ator -> ator: select box ids of interest
+ator -> vag: set config 'archive-on-close': box ids
+group accessor implements
+    vag -> vag: validate and set config
+    vag --> ator:
+end
+
+note over ledger, ator
+    Actuator performs Verifier session operations
+endnote
+
+ator -> vag: close()
+group close() implements
+    vag -> vag: archive-on-close? Some box ids
+    vag -> vag: load_cache(archive=True)
+    group load_cache() implements
+        vag -> caches: load for all box ids
+        caches -> ledger: get updates for missing box ids
+        ledger --> caches: updates
+        caches -> archive: write
+        archive --> caches:
+        caches --> vag:
+    end
+    vag -> archive: purge older than newest
+    archive --> vag:
+    vag --> ator:
+end
+
+=== OFF-LINE OPERATION ==
+note over ledger, ator
+    Verifier agent node pool is closed (agent is off-line)
+endnote
+
+ator -> vag: init(config 'parse-cache-on-open': True)
+group init() implements
+    vag -> vag: validate and set config
+    vag --> ator:
+end
+ator -> vag: open()
+group open() implements
+    vag -> vag: parse-cache-on-open? Yes
+    vag -> caches: parse(cache dir)
+    caches -> archive: get most recent archive
+    archive --> caches: most recent archive
+    caches -> caches: parse from most recent archive
+    caches --> vag: timestamp
+    vag --> ator:
+end
+
+note over ledger, ator
+    Actuator performs Verifier off-line session operations (from caches only)
+endnote
+
+@enduml

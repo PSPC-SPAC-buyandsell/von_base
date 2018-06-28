@@ -18,7 +18,7 @@ limitations under the License.
 skinparam ParticipantPadding 20
 skinparam BaloxPadding 20
 
-title Holder-Prover Agent Boot Sequence
+title Holder-Prover Agent On-Line Boot Sequence
 
 box "Indy" #LightBlue
     participant "Ledger" as ledger
@@ -28,7 +28,7 @@ actor "Holder-Prover\n(e.g., The Org Book)\nAgent" as obag
 
 === BOOTSTRAP ==
 note over ledger, obag
-Trust anchor agent service wrapper API is up
+    Node pool is open (holder-prover agent is on-line)
 endnote
 
 obag -> obag: call get_nym(did)
@@ -38,6 +38,10 @@ group get_nym() implements
 end
 
 alt Nym not present
+    note over ledger, obag
+        Trust anchor agent service wrapper API is up
+    endnote
+
     obag -[#blue]> tag: call send_nym(did, verkey, alias, role)
     group send_nym() implements
         tag -[#blue]> ledger: send agent nym
