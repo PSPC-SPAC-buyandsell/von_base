@@ -95,7 +95,6 @@ class Caches {
 class Wallet {
     -_seed2did()
     -_seed
-    +pool
     +name
     +xtype
     +handle
@@ -210,8 +209,8 @@ SchemaCache -left-> SchemaKey
 _BaseAgent -left-> SchemaKey
 
 _BaseAgent -up-> SchemaCache
-_BaseAgent "1" *-right- "1" Wallet
-Wallet "1" *-up- "1" NodePool
+_BaseAgent "1" *-left- "1" Wallet
+_BaseAgent "1" *-up- "1" NodePool
 
 RevoCacheEntry -up-> Tails
 RevoCacheEntry "2" *-down- "n" RevRegUpdateFrame
