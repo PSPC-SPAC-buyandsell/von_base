@@ -24,20 +24,20 @@ box "Indy" #LightBlue
     participant "Ledger" as ledger
 endbox
 
-actor "Holder-Prover\n(The Org Book)\nAgent" as obag
+actor "Holder-Prover\n(The Org Book)\nVON Anchor" as oban
 actor "Actuator" as ator
 
 === CREDENTIALS RESET SEQUENCE ==
 note over ledger, ator
-All agent service wrapper APIs are up
-Schema, cred defs are on ledger
-Cred load sequence has stored creds at Holder-Prover agent
+    All VON anchor service wrapper APIs are up
+    Schema, cred defs are on ledger
+    Cred load sequence has stored creds at Holder-Prover VON anchor
 endnote
 
-ator --> obag: call creds_reset()
+ator --> oban: call creds_reset()
 group creds_reset() implements
-    obag -> obag: reset wallet, link secret
-    obag --> ator:  OK
+    oban -> oban: reset wallet, link secret
+    oban --> ator:  OK
 end
 
 @enduml

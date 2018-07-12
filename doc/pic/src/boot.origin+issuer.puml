@@ -18,61 +18,61 @@ limitations under the License.
 skinparam ParticipantPadding 20
 skinparam BaloxPadding 20
 
-title Issuer Agent Boot Sequence
+title Issuer VON Anchor Boot Sequence
 
 box "Indy" #LightBlue
     participant "Ledger" as ledger
 endbox
-actor "Trust Anchor\nAgent" as tag
-actor "Holder/Prover\n(e.g., The Org Book)\nAgent" as obag
-actor "Origin+Issuer\n(e.g., BC Registrar)\nAgent" as bcrag
+actor "Trustee VON Anchor" as tan
+actor "Holder/Prover\n(e.g., The Org Book)\nVON Anchor" as oban
+actor "Origin+Issuer\n(e.g., BC Registrar)\nVON Anchor" as bcran
 
 === BOOTSTRAP ==
-note over ledger, bcrag
-Issuer agent is also Origin agent
-Trust anchor agent service wrapper API is up
+note over ledger, bcran
+    Issuer VON anchor is also Origin anchor
+    Trustee VON anchor service wrapper API is up
 endnote
 
-bcrag -> bcrag: call get_nym(did)
+bcran -> bcran: call get_nym(did)
 group get_nym() implements
-    bcrag -> ledger: Look up own nym
-    ledger --> bcrag: nym if present
+    bcran -> ledger: Look up own nym
+    ledger --> bcran: nym if present
 end
 alt Nym not present
-    bcrag -[#blue]> tag: call send_nym(did, verkey, alias, role)
+    bcran -[#blue]> tan: call send_nym(did, verkey, alias, role)
     group send_nym() implements
-        tag -[#blue]> ledger: send Issuer nym
-        ledger --[#blue]> tag: Issuer nym
-        tag --[#blue]> bcrag: Issuer nym
+        tan -[#blue]> ledger: send Issuer nym
+        ledger --[#blue]> tan: Issuer nym
+        tan --[#blue]> bcran: Issuer nym
     end
 end
 
 loop each schema that issuer originates
-    bcrag -> bcrag: call send_schema()
+    bcran -> bcran: call send_schema()
     group send_schema() implements
-        bcrag -> ledger: look up schema
-        ledger --> bcrag: schema if present
+        bcran -> ledger: look up schema
+        ledger --> bcran: schema if present
 
         alt Schema not present
-            bcrag -[#blue]> ledger: send schema
-            ledger --[#blue]> bcrag: return schema
+            bcran -[#blue]> ledger: send schema
+            ledger --[#blue]> bcran: return schema
         end
     end
 
-    bcrag -> bcrag: call send_cred_def()
+    bcran -> bcran: call send_cred_def()
     group send_cred_def() implements
-        bcrag -> ledger: look up cred def
-        ledger --> bcrag: cred def if present
+        bcran -> ledger: look up cred def
+        ledger --> bcran: cred def if present
         alt Cred def not present
-            bcrag -[#blue]> bcrag: create cred def
-            bcrag -[#blue]> ledger: send cred def
-            ledger -[#blue]-> bcrag: cred def
+            bcran -[#blue]> bcran: create cred def
+            bcran -[#blue]> ledger: send cred def
+            ledger -[#blue]-> bcran: cred def
             alt Cred def supports revocation
-                bcrag -[#blue]> bcrag: define rev reg, create tails file
-                bcrag -[#blue]> ledger: send rev reg def
-                ledger -[#blue]-> bcrag: rev reg id
-                bcrag -[#blue]> ledger: send initial rev reg state
-                ledger -[#blue]-> bcrag: OK
+                bcran -[#blue]> bcran: define rev reg, create tails file
+                bcran -[#blue]> ledger: send rev reg def
+                ledger -[#blue]-> bcran: rev reg id
+                bcran -[#blue]> ledger: send initial rev reg state
+                ledger -[#blue]-> bcran: OK
             end
         end
     end

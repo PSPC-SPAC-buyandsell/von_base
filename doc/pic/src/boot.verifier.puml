@@ -18,34 +18,34 @@ limitations under the License.
 skinparam ParticipantPadding 20
 skinparam BaloxPadding 20
 
-title Verifier Agent On-Line Boot Sequence
+title Verifier Anchor (On-Line) Boot Sequence
 
 
 box "Indy" #LightBlue
     participant "Ledger" as ledger
 endbox
-actor "Trust Anchor\nAgent" as tag
-actor "Verifier\n(e.g., SRI)\nAgent" as sag
+actor "Trustee VON Anchor" as tan
+actor "Verifier\n(e.g., SRI)\nVON Anchor" as san
 
 === BOOTSTRAP ==
-note over ledger, sag
-    Node pool is open (verifier agent is on-line)
+note over ledger, san
+    Verifier VON anchor is on-line (i.e., its node pool is open)
 endnote
 
-sag -> sag: call get_nym(did)
+san -> san: call get_nym(did)
 group get_nym() implements
-    sag -> ledger: Look up own nym
-    ledger --> sag: nym if present
+    san -> ledger: Look up own nym
+    ledger --> san: nym if present
 end
 alt Nym not present
-    note over ledger, sag
-        Trust anchor agent service wrapper API is up
+    note over ledger, san
+        Trustee VON anchor service wrapper API is up
     endnote
-    sag -[#blue]> tag: call send_nym(did, verkey, alias, role)
+    san -[#blue]> tan: call send_nym(did, verkey, alias, role)
     group send_nym() implements
-        tag -[#blue]> ledger: send agent nym
-        ledger --[#blue]> tag: agent nym
-        tag --[#blue]> sag: agent nym
+        tan -[#blue]> ledger: send anchor nym
+        ledger --[#blue]> tan: anchor nym
+        tan --[#blue]> san: anchor nym
     end
 end
 

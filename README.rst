@@ -1,6 +1,6 @@
 von_base
 ========
-This repository prepares an Ubuntu 16+ VM for the ``von_agent`` component enabling VON components.
+This repository prepares an Ubuntu 16+ VM for the ``von_anchor`` component enabling VON components.
 
 To install it, clone it from github, then issue::
 
@@ -19,11 +19,11 @@ Once ``von_base`` is set up, logout and login to pick up membership in group ``d
   (login)
   $ test/test_base
 
-to test the success of the installation (``test_base`` should echo ``0``). Proceed to the installation of component ``von_agent``.
+to test the success of the installation (``test_base`` should echo ``0``). Proceed to the installation of component ``von_anchor``.
 
 Documentation
 =============
-The design document at ``doc/agent-design.doc`` discusses in detail the packages comprising the technology demonstrator project:
+The design document at ``doc/anchor-design.doc`` discusses in detail the packages comprising the technology demonstrator project:
 
 - ``von_base``
-- ``von_agent``.
+- ``von_anchor``.

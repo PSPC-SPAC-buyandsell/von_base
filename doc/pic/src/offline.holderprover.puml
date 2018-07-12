@@ -18,7 +18,7 @@ limitations under the License.
 skinparam ParticipantPadding 20
 skinparam BoxPadding 20
 
-title Priming Holder-Prover Agent for Off-Line Operation
+title Priming Holder-Prover Anchor for Off-Line Operation
 
 box "Indy" #LightBlue
     participant "Ledger" as ledger
@@ -27,7 +27,7 @@ endbox
 participant "Caches" as caches
 box "Holder-Prover" #Linen
     participant "Archive" as archive
-    actor "Holder-Prover\nAgent" as hpag
+    actor "Holder-Prover\nVON Anchor" as hpan
     participant "Wallet" as wallet
 endbox
 
@@ -35,66 +35,66 @@ actor "Actuator" as ator
 
 === CACHING CONTENT AND ARCHIVING ==
 note over ledger, ator
-    Holder-Prover agent node pool is open (agent is on-line)
+    Holder-Prover VON anchor is on-line (i.e., its node pool is open)
 endnote
 
-ator -> hpag: init(config 'archive-cache-on-close': True)
+ator -> hpan: init(config 'archive-cache-on-close': True)
 group init() implements
-    hpag -> hpag: validate and set config
-    hpag --> ator:
+    hpan -> hpan: validate and set config
+    hpan --> ator:
 end
-ator -> hpag: open()
+ator -> hpan: open()
 group open() implements
-    hpag -> wallet: open()
-    wallet --> hpag:
-    hpag --> ator:
+    hpan -> wallet: open()
+    wallet --> hpan:
+    hpan --> ator:
 end
 
 note over ledger, ator
     Actuator performs Holder-Prover session operations
 endnote
 
-ator -> hpag: close()
+ator -> hpan: close()
 group close() implements
-    hpag -> hpag: archive-cache-on-close? Yes
-    hpag -> hpag: load_cache(archive=True)
+    hpan -> hpan: archive-cache-on-close? Yes
+    hpan -> hpan: load_cache(archive=True)
     group load_cache() implements
-        hpag -> wallet: get all creds
-        wallet --> hpag: all creds
-        hpag -> hpag: get box ids from creds
-        hpag -> caches: load for box ids
+        hpan -> wallet: get all creds
+        wallet --> hpan: all creds
+        hpan -> hpan: get box ids from creds
+        hpan -> caches: load for box ids
         caches -> ledger: get updates for missing box ids
         ledger --> caches: updates
         caches -> archive: write
         archive --> caches:
-        caches --> hpag:
+        caches --> hpan:
     end
-    hpag -> archive: purge older than newest
-    archive --> hpag:
-    hpag --> ator:
+    hpan -> archive: purge older than newest
+    archive --> hpan:
+    hpan --> ator:
 end
 
 === OFF-LINE OPERATION ==
 note over ledger, ator
-    Holder-Prover agent node pool is closed (agent is off-line)
+    Holder-Prover VON anchor is off-line (i.e., its node pool is closed)
 endnote
 
-ator -> hpag: init(config 'parse-cache-on-open': True)
+ator -> hpan: init(config 'parse-cache-on-open': True)
 group init() implements
-    hpag -> hpag: validate and set config
-    hpag --> ator:
+    hpan -> hpan: validate and set config
+    hpan --> ator:
 end
-ator -> hpag: open()
+ator -> hpan: open()
 group open() implements
-    hpag -> wallet: open()
-    wallet --> hpag:
-    hpag -> hpag: parse-cache-on-open? Yes
-    hpag -> caches: parse(cache dir)
+    hpan -> wallet: open()
+    wallet --> hpan:
+    hpan -> hpan: parse-cache-on-open? Yes
+    hpan -> caches: parse(cache dir)
     caches -> archive: get most recent archive
     archive --> caches: most recent archive
     caches -> caches: parse from most recent archive
-    caches --> hpag: timestamp
-    hpag --> ator:
+    caches --> hpan: timestamp
+    hpan --> ator:
 end
 
 note over ledger, ator

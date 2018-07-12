@@ -24,76 +24,76 @@ box "Indy" #LightBlue
     participant "Ledger" as ledger
 endbox
 
-actor "Holder-Prover\n(e.g., The Org Book)\nAgent" as obag
-actor "Issuer\n(e.g., BC Registrar)\nAgent" as bcrag
+actor "Holder-Prover\n(e.g., The Org Book)\nVON Anchor" as oban
+actor "Issuer\n(e.g., BC Registrar)\nVON Anchor" as bcran
 actor "Actuator" as ator
 
 === TAILS FILE MARSHALLING SEQUENCE ==
 note over ledger, ator
-All agent service wrapper APIs are up
-Actuator has creds of interest
+    All VON anchor service wrapper APIs are up
+    Actuator has creds of interest
 endnote
 
 ator -> ator: call revoc_info(creds)\nto get rev reg id
-ator -> bcrag: call service wrapper to download tails file for rev reg id
+ator -> bcran: call service wrapper to download tails file for rev reg id
 group #lightPink service wrapper must implement
-    bcrag -> bcrag: call path_tails(rev_reg_id)
+    bcran -> bcran: call path_tails(rev_reg_id)
     group path_tails() implements
-        bcrag -> bcrag: call Tails.linked() to get tails file for rev reg id
+        bcran -> bcran: call Tails.linked() to get tails file for rev reg id
     end
-    bcrag --> ator: tails file
+    bcran --> ator: tails file
 end
 
-ator -> obag: call service wrapper to upload tails file
+ator -> oban: call service wrapper to upload tails file
 group #lightPink service wrapper must implement
-    obag -> obag: call dir_tails() to get correct directory for tails file
+    oban -> oban: call dir_tails() to get correct directory for tails file
     group dir_tails() implements
-        obag -> obag: call Tails.dir() to get directory by rev reg id
+        oban -> oban: call Tails.dir() to get directory by rev reg id
     end
-    obag -> obag: save tails file
-    obag -> ator: OK
+    oban -> oban: save tails file
+    oban -> ator: OK
 end
 
 === PROOF CREATION SEQUENCE ==
 note over ledger, ator
-All agent service wrapper APIs are up
-Schema, cred defs, rev reg defs are on ledger
-Actuator has creds of interest
+    All VON anchor service wrapper APIs are up
+    Schema, cred defs, rev reg defs are on ledger
+    Actuator has creds of interest
 endnote
 
-ator -> obag: call build_proof_req_json(attrs, timestamps by cred def)
-obag -> obag: build proof_req
-obag --> ator: proof_req json
+ator -> oban: call build_proof_req_json(attrs, timestamps by cred def)
+oban -> oban: build proof_req
+oban --> ator: proof_req json
 
-ator -> obag: call build_req_creds_json(creds, filt)
-obag -> obag: build req_creds
-obag --> ator: req_creds json
+ator -> oban: call build_req_creds_json(creds, filt)
+oban -> oban: build req_creds
+oban --> ator: req_creds json
 
-ator -> obag: call create_proof(proof_req, creds, requested_creds)
+ator -> oban: call create_proof(proof_req, creds, requested_creds)
 group create_proof() implements
     loop each schema in creds
-        obag -> ledger: get schema
-        ledger --> obag: schema
+        oban -> ledger: get schema
+        ledger --> oban: schema
     end
 
     loop each cred def in creds
-        obag -> ledger: get cred def
-        ledger --> obag: cred def
+        oban -> ledger: get cred def
+        ledger --> oban: cred def
     end
 
     loop each rev reg in creds
-        obag -> ledger: get rev reg def
-        ledger --> obag: rev reg def
-        obag -> obag: sync rev reg to tails file
+        oban -> ledger: get rev reg def
+        ledger --> oban: rev reg def
+        oban -> oban: sync rev reg to tails file
         alt no such tails file
-            obag -[#blue]-> ator: absent tails file
+            oban -[#blue]-> ator: absent tails file
         end
-        obag -> ledger: get rev reg delta at timestamp
-        ledger --> obag: rev reg delta
+        oban -> ledger: get rev reg delta at timestamp
+        ledger --> oban: rev reg delta
     end
-    obag -> obag: construct all rev reg states
-    obag -> obag: create proof
-    obag --> ator: proof
+    oban -> oban: construct all rev reg states
+    oban -> oban: create proof
+    oban --> ator: proof
 end
 
 @enduml

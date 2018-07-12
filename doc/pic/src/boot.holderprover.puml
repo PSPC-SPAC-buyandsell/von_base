@@ -18,38 +18,39 @@ limitations under the License.
 skinparam ParticipantPadding 20
 skinparam BaloxPadding 20
 
-title Holder-Prover Agent On-Line Boot Sequence
+title Holder-Prover Anchor (On-Line) Boot Sequence
 
 box "Indy" #LightBlue
     participant "Ledger" as ledger
 endbox
-actor "Trust Anchor\nAgent" as tag
-actor "Holder-Prover\n(e.g., The Org Book)\nAgent" as obag
+actor "Trustee VON Anchor" as tan
+actor "Holder-Prover\n(e.g., The Org Book)\nVON Anchor" as oban
 
 === BOOTSTRAP ==
-note over ledger, obag
-    Node pool is open (holder-prover agent is on-line)
+note over ledger, oban
+    Holder-Prover VON anchor is on-line (i.e., its node pool is open)
+    Trustee VON anchor service wrapper API is up
 endnote
 
-obag -> obag: call get_nym(did)
+oban -> oban: call get_nym(did)
 group get_nym() implements
-    obag -> ledger: Look up agent nym
-    ledger --> obag: agent nym if present
+    oban -> ledger: Look up anchor nym
+    ledger --> oban: anchor nym if present
 end
 
 alt Nym not present
-    note over ledger, obag
-        Trust anchor agent service wrapper API is up
+    note over ledger, oban
+        Trustee VON anchor service wrapper API is up
     endnote
 
-    obag -[#blue]> tag: call send_nym(did, verkey, alias, role)
+    oban -[#blue]> tan: call send_nym(did, verkey, alias, role)
     group send_nym() implements
-        tag -[#blue]> ledger: send agent nym
-        ledger --[#blue]> tag: agent nym
-        tag --[#blue]> obag: agent nym
+        tan -[#blue]> ledger: send anchor nym
+        ledger --[#blue]> tan: anchor nym
+        tan --[#blue]> oban: anchor nym
     end
 end
 
-obag -> obag: create, store link secret
+oban -> oban: create, store link secret
 
 @enduml

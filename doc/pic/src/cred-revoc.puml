@@ -24,32 +24,32 @@ box "Indy" #LightBlue
     participant "Ledger" as ledger
 endbox
 
-actor "Holder-Prover\n(The Org Book)\nAgent" as obag
-actor "Issuer\n(BC Registrar)\nAgent" as bcrag
+actor "Holder-Prover\n(The Org Book)\nVON Anchor" as oban
+actor "Issuer\n(BC Registrar)\nVON Anchor" as bcran
 actor "Actuator" as ator
 
 === CREDENTIAL REVOCATION SEQUENCE ==
 
 note over ledger, ator
-All agent service wrapper APIs are up
-Schema, cred defs, rev reg defs are on ledger
+    All VON anchor service wrapper APIs are up
+    Schema, cred defs, rev reg defs are on ledger
 endnote
 
-ator -> obag: call get_creds()
+ator -> oban: call get_creds()
 group get_creds() implements
-    obag -> obag: get creds structure
-    obag --> ator: creds
+    oban -> oban: get creds structure
+    oban --> ator: creds
 end
 ator -> ator: call revoc_info(creds, filt)
 ator -> ator: choose (rev_reg_id, cred_rev_id)
 
-ator -> bcrag: call revoke_cred(rev_reg_id, cred_rev_id)
+ator -> bcran: call revoke_cred(rev_reg_id, cred_rev_id)
 group revoke_cred() implements
-    bcrag -> bcrag: generate rev reg delta from tails
-    bcrag -> ledger: send rev reg entry
-    ledger --> bcrag: response
-    bcrag -> bcrag: extract transaction time
-    bcrag --> ator: (epoch) transaction time
+    bcran -> bcran: generate rev reg delta from tails
+    bcran -> ledger: send rev reg entry
+    ledger --> bcran: response
+    bcran -> bcran: extract transaction time
+    bcran --> ator: (epoch) transaction time
 end
 
 @enduml

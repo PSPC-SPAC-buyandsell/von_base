@@ -23,12 +23,12 @@ package von_base {
     [docs]
 }
 
-package von_agent {
-    [agent code] as agent_code
+package von_anchor {
+    [anchor code] as anchor_code
 }
 
-agent_code ..> pipenv
-agent_code ..> libindy: use
+anchor_code ..> pipenv
+anchor_code ..> libindy: use
 libindy .down.> docker_network
 docker_network .down.>docker
 @enduml

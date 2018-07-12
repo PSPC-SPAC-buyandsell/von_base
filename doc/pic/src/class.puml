@@ -20,7 +20,7 @@ title Class Diagram
 class ErrorCode {
 }
 
-class VonAgentError {
+class VonAnchorError {
     +error_code
     +message
 }
@@ -121,7 +121,7 @@ class NodePool {
     +close()
 }
 
-class _BaseAgent {
+class _BaseAnchor {
     +pool
     +wallet
     +did
@@ -138,7 +138,7 @@ class _BaseAgent {
     +get_txn()
 }
 
-class AgentRegistrar {
+class AnchorSmith {
     {static} +role()
     +send_nym()
 }
@@ -192,47 +192,47 @@ class Verifier {
     +verify_proof()
 }
 
-class TrustAnchorAgent {
+class TrusteeAnchor {
 }
 
-class SRIAgent {
+class SRIAnchor {
 }
 
-class BCRegistrarAgent {
+class BCRegistrarAnchor {
 }
 
-class OrgBookAgent {
+class OrgBookAnchor {
 }
 
-VonAgentError "1" *-up- "1" ErrorCode
+VonAnchorError "1" *-up- "1" ErrorCode
 SchemaCache -left-> SchemaKey
-_BaseAgent -left-> SchemaKey
+_BaseAnchor -left-> SchemaKey
 
-_BaseAgent -up-> SchemaCache
-_BaseAgent "1" *-left- "1" Wallet
-_BaseAgent "1" *-up- "1" NodePool
+_BaseAnchor -up-> SchemaCache
+_BaseAnchor "1" *-left- "1" Wallet
+_BaseAnchor "1" *-up- "1" NodePool
 
 RevoCacheEntry -up-> Tails
 RevoCacheEntry "2" *-down- "n" RevRegUpdateFrame
 RevocationCache -> RevoCacheEntry
 
-_BaseAgent -up-> RevoCache
+_BaseAnchor -up-> RevoCache
 
-_BaseAgent -up-> ClaimDefCache
-_BaseAgent <|-down- AgentRegistrar
-_BaseAgent <|-down- Origin
-_BaseAgent <|-down- HolderProver
-_BaseAgent <|-down- Verifier
+_BaseAnchor -up-> ClaimDefCache
+_BaseAnchor <|-down- AnchorSmith
+_BaseAnchor <|-down- Origin
+_BaseAnchor <|-down- HolderProver
+_BaseAnchor <|-down- Verifier
 
-AgentRegistrar <|-down- TrustAnchorAgent
+AnchorSmith <|-down- TrusteeAnchor
 Origin <|-down- Issuer
 
-Issuer <|-down- SRIAgent
-Verifier <|-down- SRIAgent
+Issuer <|-down- SRIAnchor
+Verifier <|-down- SRIAnchor
 
-Issuer <|-down- BCRegistrarAgent
+Issuer <|-down- BCRegistrarAnchor
 
-HolderProver <|-down- OrgBookAgent
+HolderProver <|-down- OrgBookAnchor
 
 HolderProver --> Caches
 Verifier --> Caches

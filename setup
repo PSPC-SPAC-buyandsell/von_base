@@ -27,7 +27,7 @@ then
 fi
 
 DIR_VON_BASE="$(readlink -f $(dirname ${BASH_SOURCE[0]}))"
-DIR_VON=$(dirname "${DIR_VON_BASE}")  # container for von_base/, von_agent/, von_con_x/ holds pipenv virtual environment
+DIR_VON=$(dirname "${DIR_VON_BASE}")  # container for von_base/, von_anchor/ holds pipenv virtual environment
 DIR_FILES="${DIR_VON_BASE}/files"
 OPERATOR=${SUDO_USER}
 
@@ -56,7 +56,7 @@ then
     sudo -u ${OPERATOR} docker network create --subnet 10.0.1.0/24 von_conx_network
 fi
 
-# build indy_pool_net docker image (in case deploying von_agent without von_conx which rebuilds it via docker-compose)
+# build indy_pool_net docker image
 INDY_POOL=$(docker images --filter reference=indy_pool | sed '1,1d' | wc -l)
 if [[ "${INDY_POOL}" -eq "0" ]]
 then

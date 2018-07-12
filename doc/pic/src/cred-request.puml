@@ -24,33 +24,33 @@ box "Indy" #LightBlue
     participant "Ledger" as ledger
 endbox
 
-actor "Holder-Prover\n(The Org Book)\nAgent" as obag
+actor "Holder-Prover\n(The Org Book)\nVON Anchor" as oban
 actor "Actuator" as ator
 
 === CREDENTIAL REQUEST SEQUENCE ==
 note over ledger, ator
-All agent service wrapper APIs are up
-Schema, cred defs are on ledger
-Cred load sequence has stored creds at Holder-Prover agent
+    All VON anchor service wrapper APIs are up
+    Schema, cred defs are on ledger
+    Cred load sequence has stored creds at Holder-Prover VON anchor
 endnote
 
 alt by components of schema id or cred def id
-    ator --> obag: call get_creds_display_coarse(filt)
+    ator --> oban: call get_creds_display_coarse(filt)
     group get_creds_display_coarse() implements
-        obag -> obag: get and filter creds
-        obag --> ator: list of individual creds
+        oban -> oban: get and filter creds
+        oban --> ator: list of individual creds
     end
 else by attribute values
-    ator --> obag: call get_creds(proof_req, filt)
+    ator --> oban: call get_creds(proof_req, filt)
     group get_creds() implements
-        obag -> obag: get and filter creds by filt
-        obag --> ator: indy-sdk creds structure
+        oban -> oban: get and filter creds by filt
+        oban --> ator: indy-sdk creds structure
     end
 else by cred id
-    obag -> obag: call get_creds_by_id(proof_req, cred_ids)
+    oban -> oban: call get_creds_by_id(proof_req, cred_ids)
     group get_creds_by_id() implements
-        obag -> obag: get and filter creds by identifier
-        obag --> ator: indy-sdk creds structure
+        oban -> oban: get and filter creds by identifier
+        oban --> ator: indy-sdk creds structure
     end
 end
 

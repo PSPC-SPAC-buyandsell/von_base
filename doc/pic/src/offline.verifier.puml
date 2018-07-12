@@ -18,7 +18,7 @@ limitations under the License.
 skinparam ParticipantPadding 20
 skinparam BoxPadding 20
 
-title Priming Verifier Agent for Off-Line Operation
+title Priming Verifier Anchor for Off-Line Operation
 
 box "Indy" #LightBlue
     participant "Ledger" as ledger
@@ -27,80 +27,80 @@ endbox
 participant "Caches" as caches
 box "Issuer and/or Holder-Prover" #Linen
     participant "Archive" as archive
-    actor "Issuer\nAgent" as iag
-    actor "Holder-Prover\nAgent" as hpag
+    actor "Issuer\nVON Anchor" as ian
+    actor "Holder-Prover\nVON Anchor" as hpan
 endbox
-    actor "Verifier\nAgent" as vag
+    actor "Verifier\nVON Anchor" as van
 
 actor "Actuator" as ator
 
 === CACHING CONTENT AND ARCHIVING ==
 note over ledger, ator
-    All agents and node pool are open (agents are on-line)
+    All VON anchors are on-line (i.e., their respective node pools are open)
 endnote
 
 alt verifier geared to issuer
-    ator -> iag: get_box_ids_json()
+    ator -> ian: get_box_ids_json()
     group get_box_ids_json() implements
-        iag -> iag: get box ids from Tails arborescence
-        iag --> ator: box ids
+        ian -> ian: get box ids from Tails arborescence
+        ian --> ator: box ids
     end
 end
 alt verifier geared to holder-prover
-    ator -> hpag: get_box_ids_json()
+    ator -> hpan: get_box_ids_json()
     group get_box_ids() implements
-        hpag -> hpag: get box ids from wallet
-        hpag --> ator: box ids
+        hpan -> hpan: get box ids from wallet
+        hpan --> ator: box ids
     end
 end
 
 ator -> ator: select box ids of interest
-ator -> vag: set config 'archive-on-close': box ids
+ator -> van: set config 'archive-on-close': box ids
 group accessor implements
-    vag -> vag: validate and set config
-    vag --> ator:
+    van -> van: validate and set config
+    van --> ator:
 end
 
 note over ledger, ator
     Actuator performs Verifier session operations
 endnote
 
-ator -> vag: close()
+ator -> van: close()
 group close() implements
-    vag -> vag: archive-on-close? Some box ids
-    vag -> vag: load_cache(archive=True)
+    van -> van: archive-on-close? Some box ids
+    van -> van: load_cache(archive=True)
     group load_cache() implements
-        vag -> caches: load for all box ids
+        van -> caches: load for all box ids
         caches -> ledger: get updates for missing box ids
         ledger --> caches: updates
         caches -> archive: write
         archive --> caches:
-        caches --> vag:
+        caches --> van:
     end
-    vag -> archive: purge older than newest
-    archive --> vag:
-    vag --> ator:
+    van -> archive: purge older than newest
+    archive --> van:
+    van --> ator:
 end
 
 === OFF-LINE OPERATION ==
 note over ledger, ator
-    Verifier agent node pool is closed (agent is off-line)
+    Verifier VON anchor is off-line (i.e., its node pool is closed)
 endnote
 
-ator -> vag: init(config 'parse-cache-on-open': True)
+ator -> van: init(config 'parse-cache-on-open': True)
 group init() implements
-    vag -> vag: validate and set config
-    vag --> ator:
+    van -> van: validate and set config
+    van --> ator:
 end
-ator -> vag: open()
+ator -> van: open()
 group open() implements
-    vag -> vag: parse-cache-on-open? Yes
-    vag -> caches: parse(cache dir)
+    van -> van: parse-cache-on-open? Yes
+    van -> caches: parse(cache dir)
     caches -> archive: get most recent archive
     archive --> caches: most recent archive
     caches -> caches: parse from most recent archive
-    caches --> vag: timestamp
-    vag --> ator:
+    caches --> van: timestamp
+    van --> ator:
 end
 
 note over ledger, ator

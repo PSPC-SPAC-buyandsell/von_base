@@ -24,61 +24,61 @@ box "Indy" #LightBlue
     participant "Ledger" as ledger
 endbox
 
-actor "Holder-Prover\n(The Org Book)\nAgent" as obag
-actor "Issuer\n(BC Registrar)\nAgent" as bcrag
+actor "Holder-Prover\n(The Org Book)\nVON Anchor" as oban
+actor "Issuer\n(BC Registrar)\nVON Anchor" as bcran
 actor "Actuator" as ator
 
 === CREDENTIAL LOAD SEQUENCE ==
 
 note over ledger, ator
-All agent service wrapper APIs are up
-Schema, cred defs, rev reg defs are on ledger
+    All VON anchor service wrapper APIs are up
+    Schema, cred defs, rev reg defs are on ledger
 endnote
 
-ator -> bcrag: call create_cred_offer(schema_seq_no)
+ator -> bcran: call create_cred_offer(schema_seq_no)
 group create_cred_offer() implements
-    bcrag -> ledger: get cred def
-    ledger --> bcrag: cred def
-    bcrag -> bcrag: create and store cred offer
-    bcrag --> ator: cred_offer
+    bcran -> ledger: get cred def
+    ledger --> bcran: cred def
+    bcran -> bcran: create and store cred offer
+    bcran --> ator: cred_offer
 end
 
-ator -> obag: call create_cred_req(cred_offer, cred_def)
+ator -> oban: call create_cred_req(cred_offer, cred_def)
 group create_cred_req() implements
-    obag -> obag: create cred req and metadata
-    bcrag --> ator: cred_req, metadata
+    oban -> oban: create cred req and metadata
+    bcran --> ator: cred_req, metadata
 end
 
 loop for each cred
-    ator -> bcrag: call create_cred(cred_offer, cred_req, attrs)
+    ator -> bcran: call create_cred(cred_offer, cred_req, attrs)
     group create_cred() implements
-        bcrag -> bcrag: create cred
+        bcran -> bcran: create cred
         alt cred def creation indicates rev reg full
-            bcrag -> bcrag: create next rev reg, tails file
-            bcrag -> ledger: send rev reg def
-            ledger --> bcrag: rev reg id
-            bcrag -> ledger: send initial rev reg state
-            ledger --> bcrag: OK
-            bcrag -> bcrag: call create_cred() recursively
+            bcran -> bcran: create next rev reg, tails file
+            bcran -> ledger: send rev reg def
+            ledger --> bcran: rev reg id
+            bcran -> ledger: send initial rev reg state
+            ledger --> bcran: OK
+            bcran -> bcran: call create_cred() recursively
         end
-        bcrag --> ator: cred, cred revocation identifier
+        bcran --> ator: cred, cred revocation identifier
     end
 
-    ator -> obag: call store_cred(cred, metadata)
+    ator -> oban: call store_cred(cred, metadata)
     group store_cred() implements
         alt tails file present or revocation not supported
-            obag -> obag: store cred
-            obag --> ator: cred id in wallet
+            oban -> oban: store cred
+            oban --> ator: cred id in wallet
         else missing required tails file
-            obag -[#blue]-> ator: absent tails file
+            oban -[#blue]-> ator: absent tails file
         end
         ator -[#blue]> ator: get rev reg id from cred
-        ator -[#blue]> bcrag: get tails file by rev reg id
-        bcrag -[#blue]-> ator: tails file
+        ator -[#blue]> bcran: get tails file by rev reg id
+        bcran -[#blue]-> ator: tails file
     end
-    ator -[#blue]> obag: upload tails file
-    obag -[#blue]> obag: call Tails.dir() to find dir for tails file and write it
-    obag -[#blue]-> ator: return
+    ator -[#blue]> oban: upload tails file
+    oban -[#blue]> oban: call Tails.dir() to find dir for tails file and write it
+    oban -[#blue]-> ator: return
 end
 
 @enduml
