@@ -54,6 +54,7 @@ class Tails {
     +rr_id
     +path
     +open()
+    {static} +ok_hash()
     {static} +associate()
     {static} +dir()
     {static} +linked()
