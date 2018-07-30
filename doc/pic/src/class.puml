@@ -166,25 +166,29 @@ class HolderProver {
     -_build_rr_delta_json()
     +cfg
     +dir_cache
-    +build_proof_req_json()
     +build_req_creds_json()
     +dir_tails()
     +open()
     +close()
     +rev_regs()
+    +offline_intervals()
     +create_link_secret()
     +create_cred_req()
     +store_cred()
     +load_cache()
     +get_box_ids_json()
-    +get_creds_display_coarse()
+    +get_cred_infos_by_q()
+    +get_cred_infos_by_filter()
+    +get_cred_info_by_id()
     +get_creds()
     +get_creds_by_id()
+    +get_cred_briefs_by_proof_req_q()
     +create_proof()
     +reset_wallet()
 }
 
 class Verifier {
+    +build_proof_req_json()
     -_build_rr_state_json()
     +cfg
     +dir_cache
