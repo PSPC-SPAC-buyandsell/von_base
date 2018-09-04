@@ -111,6 +111,14 @@ class Wallet {
     +remove()
 }
 
+enum Protocol {
+    {static} +V_13
+    {static} +V_14
+    {static} +V_15
+    {static} +V_16
+    {static} +DEFAULT
+}
+
 class NodePool {
     +name
     +genesis_txn_path
@@ -214,6 +222,8 @@ class OrgBookAnchor {
 VonAnchorError "1" *-up- "1" ErrorCode
 SchemaCache -left-> SchemaKey
 _BaseAnchor -left-> SchemaKey
+
+NodePool "1" *-- "1" Protocol
 
 _BaseAnchor -up-> SchemaCache
 _BaseAnchor "1" *-left- "1" Wallet
