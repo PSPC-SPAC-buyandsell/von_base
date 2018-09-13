@@ -96,6 +96,7 @@ class Caches {
 class Wallet {
     -_seed2did()
     -_seed
+    -_next_seed
     +name
     +xtype
     +handle
@@ -108,6 +109,8 @@ class Wallet {
     +create()
     +open()
     +close()
+    +rekey_init()
+    +rekey_apply()
     +remove()
 }
 
@@ -145,6 +148,7 @@ class _BaseAnchor {
     +get_cred_def()
     +get_schema()
     +get_txn()
+    +rekey()
 }
 
 class AnchorSmith {
