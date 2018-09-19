@@ -109,8 +109,8 @@ class Wallet {
     +create()
     +open()
     +close()
-    +rekey_init()
-    +rekey_apply()
+    +reseed()
+    +reseed_apply()
     +remove()
 }
 
@@ -148,7 +148,7 @@ class _BaseAnchor {
     +get_cred_def()
     +get_schema()
     +get_txn()
-    +rekey()
+    +reseed()
 }
 
 class AnchorSmith {

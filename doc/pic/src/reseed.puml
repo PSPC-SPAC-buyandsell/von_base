@@ -18,7 +18,7 @@ limitations under the License.
 skinparam ParticipantPadding 20
 skinparam BoxPadding 20
 
-title Key Update Sequence
+title Key Rotation Sequence
 
 box "Indy" #LightBlue
     participant "Ledger" as ledger
@@ -31,18 +31,18 @@ endbox
 
 actor "Actuator" as ator
 
-=== KEY UPDATE SEQUENCE ==
+=== KEY ROTATION SEQUENCE ==
 note over ledger, ator
     All VON anchor service wrapper APIs are up
     VON anchor DID is on ledger
 endnote
 
-ator -> an: call rekey(next seed)
-an -> wallet: call rekey_init(next seed)
+ator -> an: call reseed(next seed)
+an -> wallet: call reseed_init(next seed)
 wallet --> an: new verification key
 an -> ledger: update nym
 ledger --> an:
-an -> wallet: call rekey_apply()
+an -> wallet: call reseed_apply()
 wallet -> wallet: update seed, seed-to-DID metadata, verification key
 wallet --> an:
 an --> ator:
