@@ -7,7 +7,7 @@ you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
 
 http://www.apache.org/licenses/LICENSE-2.0
-
+or
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -187,7 +187,7 @@ class HolderProver {
     +create_link_secret()
     +create_cred_req()
     +store_cred()
-    +load_cache()
+    +load_cache_for_proof()
     +get_box_ids_json()
     +get_cred_infos_by_q()
     +get_cred_infos_by_filter()
@@ -205,7 +205,7 @@ class Verifier {
     -_build_rr_state_json()
     {static} +role()
     +build_proof_req_json()
-    +load_cache()
+    +load_cache_for_verification()
     +open()
     +verify_proof()
 }
@@ -221,6 +221,11 @@ class BCRegistrarAnchor {
 }
 
 class OrgBookAnchor {
+}
+
+class OrgHubAnchor {
+    {static} +role()
+    +close()
 }
 
 VonAnchorError "1" *-up- "1" ErrorCode
@@ -248,14 +253,19 @@ _BaseAnchor <|-down- Verifier
 AnchorSmith <|-down- TrusteeAnchor
 Origin <|-down- Issuer
 
-Issuer <|-down- SRIAnchor
-Verifier <|-down- SRIAnchor
+Issuer <|-left- SRIAnchor
+Verifier <|-right- SRIAnchor
 
-Issuer <|-down- BCRegistrarAnchor
+Issuer <|-up- BCRegistrarAnchor
 
 HolderProver <|-down- OrgBookAnchor
 
+OrgBookAnchor <|-- OrgHubAnchor
+Issuer <|-- OrgHubAnchor
+Verifier <|-- OrgHubAnchor
+
 HolderProver --> Caches
 Verifier --> Caches
+OrgHubAnchor --> Caches
 
 @enduml
