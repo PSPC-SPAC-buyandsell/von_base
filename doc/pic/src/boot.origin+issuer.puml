@@ -24,8 +24,8 @@ box "Indy" #LightBlue
     participant "Ledger" as ledger
 endbox
 actor "Trustee VON Anchor" as tan
-actor "Holder/Prover\n(e.g., The Org Book)\nVON Anchor" as oban
-actor "Origin+Issuer\n(e.g., BC Registrar)\nVON Anchor" as bcran
+actor "Holder-Prover (e.g., The Org Book)\nVON Anchor" as oban
+actor "Origin+Issuer (e.g., BC Registrar)\nVON Anchor" as bcran
 
 === BOOTSTRAP ==
 note over ledger, bcran
@@ -73,6 +73,7 @@ loop each schema that issuer originates
                 ledger -[#blue]-> bcran: rev reg id
                 bcran -[#blue]> ledger: send initial rev reg state
                 ledger -[#blue]-> bcran: OK
+                bcran -[#blue]> bcran: start asynchronous pre-computation of\nnext rev reg, tails file
             end
         end
     end

@@ -144,6 +144,8 @@ class _BaseAnchor {
     {static} +role()
     +open()
     +close()
+    +get_endpoint()
+    +send_endpoint()
     +get_nym()
     +get_cred_def()
     +get_schema()
@@ -162,6 +164,8 @@ class Origin {
 
 class Issuer {
     -_create_rev_reg()
+    -_send_rev_reg_def()
+    -_set_rev_reg()
     -_sync_revoc()
     +open()
     +path_tails()

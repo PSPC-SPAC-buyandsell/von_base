@@ -54,7 +54,7 @@ loop for each cred
     group create_cred() implements
         bcran -> bcran: create cred
         alt cred def creation indicates rev reg full
-            bcran -> bcran: create next rev reg, tails file
+            bcran -> bcran: set next rev reg, tails file;\nstart asynchronous\npre-computation of next
             bcran -> ledger: send rev reg def
             ledger --> bcran: rev reg id
             bcran -> ledger: send initial rev reg state
