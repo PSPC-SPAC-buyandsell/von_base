@@ -162,11 +162,27 @@ class Origin {
     +send_schema()
 }
 
-class Issuer {
+class RevRegBuilder {
+    {static} +get_state()
+    {static} +dir_tails()
+    {static} +dir_tails_sentinel()
+    +dir_tails_top()
+    +dir_tails_target()
+    +serve()
+    +stop()
     -_create_rev_reg()
+}
+
+enum State {
+    {static} +RUNNING
+    {static} +STOPPING
+    {static} +ABSENT
+}
+
+class Issuer {
     -_send_rev_reg_def()
     -_set_rev_reg()
-    -_sync_revoc()
+    -_sync_revoc_for_issue()
     +open()
     +path_tails()
     +send_cred_def()
@@ -180,7 +196,7 @@ class HolderProver {
     +cfg
     +dir_cache
     -_link_secret
-    -_sync_revoc()
+    -_sync_revoc_for_proof()
     -_build_rr_delta_json()
     +build_req_creds_json()
     +dir_tails()
@@ -238,6 +254,9 @@ _BaseAnchor -left-> SchemaKey
 
 NodePool "1" *-- "1" Protocol
 
+RevRegBuilder *-- State
+
+
 _BaseAnchor -up-> SchemaCache
 _BaseAnchor "1" *-left- "1" Wallet
 _BaseAnchor "1" *-up- "1" NodePool
@@ -255,17 +274,21 @@ _BaseAnchor <|-down- HolderProver
 _BaseAnchor <|-down- Verifier
 
 AnchorSmith <|-down- TrusteeAnchor
-Origin <|-down- Issuer
+_BaseAnchor <|-down- RevRegBuilder
+RevRegBuilder <-- Issuer
 
+Origin <|-left- SRIAnchor
 Issuer <|-left- SRIAnchor
 Verifier <|-right- SRIAnchor
 
 Issuer <|-up- BCRegistrarAnchor
+Origin <|-up- BCRegistrarAnchor
 
 HolderProver <|-down- OrgBookAnchor
 
 OrgBookAnchor <|-- OrgHubAnchor
 Issuer <|-- OrgHubAnchor
+Origin <|-- OrgHubAnchor
 Verifier <|-- OrgHubAnchor
 
 HolderProver --> Caches
