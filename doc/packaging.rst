@@ -55,6 +55,7 @@ If not yet present in the pipenv virtual environment, issue
 .. code-block:: bash
 
     $ pipenv install sphinx
+    $ pipenv install sphinx_rtd_theme
 
 at the prompt to install sphinx.
 
