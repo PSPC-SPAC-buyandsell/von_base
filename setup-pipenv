@@ -27,6 +27,6 @@ fi
 pip3 install --trusted-host pypi.python.org --upgrade pip==9.0.3
 pip3 install --trusted-host pypi.python.org --user pipenv
 
-pipenv --three --python 3.7
+pipenv --three --python 3.6
 pipenv install pytest==3.6.4
 pipenv install pytest-asyncio==0.8.0
