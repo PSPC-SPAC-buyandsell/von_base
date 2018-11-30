@@ -46,7 +46,7 @@ and use git to commit and push the delta to the ``requirements.txt`` file.
 Test and Fix ``von_anchor``
 ---------------------------
 
-Issue:
+Issue at the prompt:
 
 .. code-block:: bash
 
@@ -58,31 +58,7 @@ Issue:
 
 for all current unit tests and check the results. If the indy-sdk deltas drive new behaviour, new test code may be necessary.
 
-Update ``von_anchor`` if Necessary
-----------------------------------
+Update and Release ``von_anchor`` if Necessary
+----------------------------------------------
 
-If there are any code changes required in the ``von_anchor`` source code, update the version in ``setup.py`` and re-release:
-
-.. code-block:: bash
-
-    $ cd ~/von_anchor
-    $ rm -rf dist
-    $ rm -rf von_anchor.egg-info
-    $ pipenv run python setup.py sdist
-    $ pipenv install twine
-    $ pipenv run twine upload dist/von_anchor-<x.y.z>.tar.gz
-
-where ``<x.y.z>`` represents the new version number. The ``<x.y>`` major and minor revisions should match the indy-sdk version that its underlying master revision anticipates; e.g., 1.6.z would correspond to indy-sdk 1.5.0-dev-nnn, converging toward an indy-sdk 1.6 release. Be sure that file ``~/.pypirc`` is up to date:
-
-.. code-block::
-
-    [distutils]
-    index-servers=
-        pypi
-
-    [pypi]
-    username=sri-von
-    password=Apple1995!
-
-Use git to commit and push any resulting code changes.
-
+Consult ``packaging.rst`` in this directory for directions on building and uploading the VON Anchor package.

@@ -35,8 +35,10 @@ INDY_POOL=$(docker images --filter reference=indy_pool | sed '1,1d' | wc -l)
 
 NETWORK=$(docker network ls --filter name=indy_pool_network | sed '1,1d' | wc -l)
 [[ "${NETWORK}" -eq "1" ]] || quit 5
-NETWORK=$(docker network ls --filter name=von_conx_network | sed '1,1d' | wc -l)
-[[ "${NETWORK}" -eq "1" ]] || quit 6
+
+# von_conx is a dormant project
+# NETWORK=$(docker network ls --filter name=von_conx_network | sed '1,1d' | wc -l)
+# [[ "${NETWORK}" -eq "1" ]] || quit 6
 
 PYTEST_PACKAGES=$(cat ${DIR_VON}/Pipfile | awk '/\[packages\]/,0' | grep -P '(pytest)|(pytest-asyncio)' | wc -l)
 [[ "${PYTEST_PACKAGES}" -eq "2" ]] || quit 7
