@@ -23,7 +23,7 @@ Move Existing Tags
 
 If committing changes that do not affect ``von_anchor`` in pypi, effectively move the existing tag by deleting and recreating it.
 
-At the bash prompt, issue the following to delete the tag in ``von_base`` and ``von_anchor``::
+At the bash prompt, issue the following to delete the tag in ``von_base``, ``von_anchor``, and ``von_tails``::
 
     $ cd ~/von_base
     $ git tag -d <x.y.z>
@@ -32,6 +32,12 @@ At the bash prompt, issue the following to delete the tag in ``von_base`` and ``
     $ git push origin <x.y.z>
 
     $ cd ~/von_anchor
+    $ git tag -d <x.y.z>
+    $ git push origin :refs/tags/<x.y.z>
+    $ git tag <x.y.z> -m'von_anchor <x.y.z>'
+    $ git push origin <x.y.z>
+
+    $ cd ~/von_tails
     $ git tag -d <x.y.z>
     $ git push origin :refs/tags/<x.y.z>
     $ git tag <x.y.z> -m'von_anchor <x.y.z>'

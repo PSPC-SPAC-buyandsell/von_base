@@ -17,34 +17,6 @@ For all operations, ensure that environment variables have correct values; issue
 
 at the prompt or adjust ``$HOME/.profile`` accordingly and source it.
 
-Install sphinx if Necessary
----------------------------
-
-If not yet present in the pipenv virtual environment, issue::
-
-    $ pipenv install sphinx
-    $ pipenv install sphinx_rtd_theme
-
-at the prompt to install sphinx.
-
-VON Anchor
-++++++++++
-
-This section outlines the process to test and release ``von_anchor``.
-
-Test ``von_anchor``
----------------------------
-
-Issue at the prompt::
-
-    $ cd ~/von_anchor/test
-    $ pipenv run pytest -s test_pool.py
-    $ pipenv run pytest -s test_wallet.py
-    $ pipenv run pytest -s test_anchors.py
-    ...
-
-for all current unit tests and check the results.
-
 Install twine if Necessary
 --------------------------
 
@@ -67,8 +39,46 @@ Be sure that file ``$HOME/.pypirc`` is up to date::
     username=sri-von
     password=Apple1995!
 
-Build Sphinx Generation If Necessary
---------------------------------------------------
+Install sphinx if Necessary
+---------------------------
+
+If not yet present in the pipenv virtual environment, issue::
+
+    $ pipenv install sphinx
+    $ pipenv install sphinx_rtd_theme
+
+at the prompt to install sphinx.
+
+VON Anchor
+++++++++++
+
+This section outlines the process to test and release ``von_anchor``.
+
+Test ``von_anchor``
+---------------------------
+
+Issue at the prompt::
+
+    $ cd $HOME/von_anchor/test
+    $ pipenv run pytest -s test_pool.py
+    $ pipenv run pytest -s test_wallet.py
+    $ pipenv run pytest -s test_anchors.py
+    ...
+
+for all current unit tests and check the results.
+
+Update sphinx Documentation
+----------------------------
+
+The following subsections outline the update operation for sphinx documentation.
+
+Set Version in sphinx Document
+...............................
+
+Adjust the ``version`` and ``release`` values in ``docs/source/conf.py`` within the ``von_anchor`` installation directory: they must match the tag marking the correct ``von_anchor`` version.
+
+Inspect Document Content
+........................
 
 To create a clean target directory and build documentation into it, issue::
 
@@ -79,30 +89,27 @@ To create a clean target directory and build documentation into it, issue::
 
 at the prompt and inspect the content starting from ``$HOME/_sandbox/sphinx/index.html`` in a browser.
 
-Use git to commit and push any resulting code changes. Tag the release as per ``tagging.rst`` in this directory.
-
-Update, Build, and Upload ``von_anchor`` if Necessary
+Push Changes
 -----------------------------------------------------
 
 If there are any code changes required in the ``von_anchor`` source code, update the version in ``setup.py`` and re-release::
 
-    $ cd ~/von_anchor
+    $ cd $HOME/von_anchor
     $ rm -rf dist
     $ rm -rf von_anchor.egg-info
     $ pipenv run python setup.py sdist
     $ pipenv run twine upload dist/von_anchor-<x.y.z>.tar.gz
 
-where ``<x.y.z>`` represents the new version number. The ``<x.y>`` major and minor revisions should match the underlying indy-sdk version that its underlying master revision anticipates; e.g., 1.6.z would correspond to indy-sdk 1.6.* release. Be sure that file ``$HOME/.pypirc`` is up to date::
+where ``<x.y.z>`` represents the new version number. The ``<x.y>`` major and minor revisions should match the underlying indy-sdk version that its underlying master revision anticipates; e.g., 1.6.z would correspond to indy-sdk 1.6.* release.
 
-    [distutils]
-    index-servers=
-        pypi
+If there are any changes required in the ``von_anchor`` source code, update the version in ``setup.py`` in the ``von_anchor`` installation directory. Use git to commit and push any code changes::
 
-    [pypi]
-    username=sri-von
-    password=Apple1995!
+    $ cd $HOME/von_anchor
+    $ git add .
+    $ git commit -m'create a lucid comment'
+    $ git push
 
-Use git to commit and push any resulting code changes. Tag the release as per ``tagging.rst`` in this directory.
+Tag the release as per ``tagging.rst`` in this directory.
 
 VON Tails
 ++++++++++
@@ -114,8 +121,18 @@ Test ``von_tails``
 
 Consult https://von-tails.readthedocs.io/en/latest/von_tails/installation.html to install and validate the operation of the VON Tails server.
 
-Build Sphinx Documentation If Necessary
---------------------------------------------------
+Update sphinx Documentation
+----------------------------
+
+The following subsections outline the update operation for sphinx documentation.
+
+Set Version in sphinx Document
+...............................
+
+Adjust the ``version`` and ``release`` values in ``docs/source/conf.py`` within the ``von_tails`` installation directory: they must match the tag marking the correct ``von_anchor`` version.
+
+Inspect Document Content
+........................
 
 To create a clean target directory and build documentation into it, issue::
 
@@ -126,4 +143,14 @@ To create a clean target directory and build documentation into it, issue::
 
 at the prompt and inspect the content starting from ``$HOME/_sandbox/sphinx/index.html`` in a browser.
 
-Use git to commit and push any resulting code changes. Tag the release as per ``tagging.rst`` in this directory.
+Push Changes
+-----------------
+
+Use git to commit and push any resulting code changes::
+
+    $ cd $HOME/von_tails
+    $ git add .
+    $ git commit -m'create a lucid comment'
+    $ git push
+
+Tag the release as per ``tagging.rst`` in this directory.
