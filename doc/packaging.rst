@@ -17,6 +17,21 @@ For all operations, ensure that environment variables have correct values; issue
 
 at the prompt or adjust ``$HOME/.profile`` accordingly and source it.
 
+Install and Run pylint if Necessary
+-----------------------------------
+
+To run pylint to check for newly introduced poor code, issue::
+
+    $ pipenv install pylint
+
+at the prompt and edit ``$HOME/.pylintrc.txt`` to taste. The project uses 120 character lines in source code, and variables ``rc``, ``rv`` throughout for return codes and return values, among other house rules.
+
+Issue::
+
+    $ pipenv run pylint <src.py>
+
+at the prompt to check file ``<src.py>``.
+
 Install twine if Necessary
 --------------------------
 
