@@ -14,7 +14,8 @@ At the bash prompt, issue:
     $ git clone https://github.com/hyperledger/indy-sdk
     $ cp indy-sdk/ci/indy-pool.dockerfile ~/von_base/files
     $ cd indy-sdk/libindy
-    $ curl -sSf https://static.rust-lang.org/rustup.sh | sh
+    $ curl https://sh.rustup.rs -sSf | sh
+    $ sudo apt install cargo
     $ cargo build --release
     $ cp target/debug/libindy.so ~/von_base/files
     $ cd ~/von_base/files
