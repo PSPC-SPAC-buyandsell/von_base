@@ -32,6 +32,8 @@ DIR_FILES="${DIR_VON_BASE}/files"
 OPERATOR=${SUDO_USER}
 
 # prerequisites
+apt clean
+rm -r /var/lib/apt/lists/*
 apt-get install software-properties-common
 bash -c "LC_ALL=C.UTF-8 add-apt-repository -y ppa:ondrej/php"
 bash -c "LC_ALL=C.UTF-8 add-apt-repository -y ppa:deadsnakes/ppa"
