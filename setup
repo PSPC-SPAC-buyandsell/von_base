@@ -30,6 +30,7 @@ DIR_VON_BASE="$(readlink -f $(dirname ${BASH_SOURCE[0]}))"
 DIR_VON=$(dirname "${DIR_VON_BASE}")  # container for von_base/, von_anchor/ holds pipenv virtual environment
 DIR_FILES="${DIR_VON_BASE}/files"
 OPERATOR=${SUDO_USER}
+PY_VER=${1:-3.6}
 
 # prerequisites
 apt clean
@@ -82,5 +83,5 @@ curl -L https://raw.githubusercontent.com/docker/compose/${DC_VERSION}/contrib/c
 
 # python virtual environment (setup as non-sudo)
 cd "${DIR_VON}"
-sudo -u ${OPERATOR} -i "${DIR_VON_BASE}/setup-pipenv"
+sudo -u ${OPERATOR} -i "${DIR_VON_BASE}/setup-pipenv ${PY_VER}"
 cd -
