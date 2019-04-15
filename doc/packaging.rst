@@ -69,6 +69,13 @@ VON Anchor
 
 This section outlines the process to test and release ``von_anchor``.
 
+Set Version
+...........
+
+Set the current version number as the only line in file ``VERSION.txt``.
+
+A version number takes the form ``<x.y.z>``. The ``<x.y>`` major and minor revisions should match the underlying indy-sdk version that its underlying master revision anticipates; e.g., 1.6.z would correspond to indy-sdk 1.6.* release.
+
 Test ``von_anchor``
 ---------------------------
 
@@ -87,11 +94,6 @@ Update sphinx Documentation
 
 The following subsections outline the update operation for sphinx documentation.
 
-Set Version in sphinx Document
-...............................
-
-Adjust the ``version`` and ``release`` values in ``docs/source/conf.py`` within the ``von_anchor`` installation directory: they must match the tag marking the correct ``von_anchor`` version.
-
 Inspect Document Content
 ........................
 
@@ -107,7 +109,7 @@ at the prompt and inspect the content starting from ``$HOME/_sandbox/sphinx/inde
 Push Changes
 -----------------------------------------------------
 
-If there are any code changes required in the ``von_anchor`` source code, update the version in ``setup.py`` and re-release::
+If there are any code changes required in the ``von_anchor`` source code, update the version as above and enter::
 
     $ cd $HOME/von_anchor
     $ rm -rf dist
@@ -115,7 +117,7 @@ If there are any code changes required in the ``von_anchor`` source code, update
     $ pipenv run python setup.py sdist
     $ pipenv run twine upload dist/von_anchor-<x.y.z>.tar.gz
 
-where ``<x.y.z>`` represents the new version number. The ``<x.y>`` major and minor revisions should match the underlying indy-sdk version that its underlying master revision anticipates; e.g., 1.6.z would correspond to indy-sdk 1.6.* release.
+to re-release the package.
 
 If there are any changes required in the ``von_anchor`` source code, update the version in ``setup.py`` in the ``von_anchor`` installation directory. Use git to commit and push any code changes::
 
@@ -124,7 +126,7 @@ If there are any changes required in the ``von_anchor`` source code, update the 
     $ git commit -m'create a lucid comment'
     $ git push
 
-Tag the release as per ``tagging.rst`` in this directory.
+and then tag the release as per ``tagging.rst`` in this directory.
 
 VON Tails
 ++++++++++
