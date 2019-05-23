@@ -100,7 +100,6 @@ Inspect Document Content
 To create a clean target directory and build documentation into it, issue::
 
     $ rm -rf $HOME/_sandbox/sphinx
-    $ mkdir -p $HOME/_sandbox/sphinx
     $ cd $HOME/von_anchor/docs/source
     $ pipenv run sphinx-build . $HOME/_sandbox/sphinx
 
