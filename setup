@@ -83,5 +83,5 @@ curl -L https://raw.githubusercontent.com/docker/compose/${DC_VERSION}/contrib/c
 
 # python virtual environment (setup as non-sudo)
 cd "${DIR_VON}"
-sudo -u ${OPERATOR} -i "${DIR_VON_BASE}/setup-pipenv ${PY_VER}"
+sudo -u ${OPERATOR} -i "${DIR_VON_BASE}/setup-pipenv" "${PY_VER}"
 cd -

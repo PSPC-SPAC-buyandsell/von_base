@@ -26,5 +26,5 @@ fi
 pipenv install twine
 pipenv install pylint
 pipenv install pytest-cov
-pipenv install Sphinx
-pipenv install sphinx-rtd-theme
+pipenv install Sphinx<2
+pipenv install sphinx-rtd-theme<0.5
