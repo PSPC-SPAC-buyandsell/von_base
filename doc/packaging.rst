@@ -140,16 +140,6 @@ Consult https://von-tails.readthedocs.io/en/latest/von_tails/installation.html t
 Update sphinx Documentation
 ----------------------------
 
-The following subsections outline the update operation for sphinx documentation.
-
-Set Version in sphinx Document
-...............................
-
-Adjust the ``version`` and ``release`` values in ``docs/source/conf.py`` within the ``von_tails`` installation directory: they must match the tag marking the correct ``von_anchor`` version.
-
-Inspect Document Content
-........................
-
 To create a clean target directory and build documentation into it, issue::
 
     $ rm -rf $HOME/_sandbox/sphinx
