@@ -38,7 +38,7 @@ rm -r /var/lib/apt/lists/*
 apt-get install software-properties-common
 bash -c "LC_ALL=C.UTF-8 add-apt-repository -y ppa:ondrej/php"
 bash -c "LC_ALL=C.UTF-8 add-apt-repository -y ppa:deadsnakes/ppa"
-apt update -y && apt install -y build-essential pkg-config cmake libssl-dev libsqlite3-dev libsodium-dev libkrb5-dev libpgm-dev libnorm-dev libzmq3-dev libncursesw5-dev python3.6 python3.6-dev python3-pip python3-nacl apt-transport-https ca-certificates libtool autoconf automake uuid-dev
+apt update -y && apt install -y build-essential pkg-config cmake libssl-dev libsqlite3-dev libsodium-dev libkrb5-dev libpgm-dev libnorm-dev libzmq3-dev libncursesw5-dev python3.6 python3.6-dev python3-pip python3-nacl apt-transport-https ca-certificates curl libtool autoconf automake uuid-dev jq
 
 # docker
 update-ca-certificates
@@ -75,10 +75,11 @@ tar -xpvzf libindy.so.tgz &> /dev/null
 mv libindy.so /usr/lib/
 
 # docker-compose
-DC_VERSION=$(git ls-remote https://github.com/docker/compose | grep refs/tags | grep -oP "[0-9]+\.[0-9][0-9]+\.[0-9]+$" | tail -n 1)
+DC_VERSION=$(curl --silent https://api.github.com/repos/docker/compose/releases/latest | jq .name -r)
 ARCH="$(uname -s)-$(uname -m)"
-curl -L https://github.com/docker/compose/releases/download/${DC_VERSION}/docker-compose-${ARCH} > /usr/local/bin/docker-compose
-chmod +x /usr/local/bin/docker-compose
+DC_DEST=/usr/local/bin/docker-compose
+curl -L https://github.com/docker/compose/releases/download/${DC_VERSION}/docker-compose-${ARCH} > ${DC_DEST}
+chmod 755 ${DC_DEST}
 curl -L https://raw.githubusercontent.com/docker/compose/${DC_VERSION}/contrib/completion/bash/docker-compose > /etc/bash_completion.d/docker-compose
 
 # python virtual environment (setup as non-sudo)
