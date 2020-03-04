@@ -14,7 +14,23 @@ At the bash prompt, issue:
     $ git clone https://github.com/hyperledger/indy-sdk
     $ cp indy-sdk/ci/indy-pool.dockerfile ~/von_base/files
     $ cd indy-sdk/libindy
+
+If rust is already on the host, issue:
+
+.. code-block:: bash
+
+    $ rustup update
+
+otherwise issue:
+
+.. code-block:: bash
+
     $ curl https://sh.rustup.rs -sSf | sh
+
+and continue:
+
+.. code-block:: bash
+
     $ sudo apt install cargo
     $ cargo build --release
     $ cp target/debug/libindy.so ~/von_base/files
